@@ -6,12 +6,12 @@
   <title>Favorites - StudyAI</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <nav class="navbar">
     <div class="nav-container">
-      <a href="../index.html" class="logo"><div class="logo-icon"><i class="fas fa-graduation-cap"></i></div><span>Study<span class="gradient-text">AI</span></span></a>
+      <a href="index.html" class="logo"><div class="logo-icon"><i class="fas fa-graduation-cap"></i></div><span>Study<span class="gradient-text">AI</span></span></a>
       <div class="nav-actions">
         <button class="icon-btn" id="theme-toggle"><i class="fas fa-moon"></i></button>
         <button class="btn btn-primary btn-sm" id="login-btn" onclick="openModal('auth-modal')">Login</button>
@@ -45,20 +45,24 @@
     </div></div>
   </div>
   <div id="toast-container" class="toast-container"></div>
-  <script src="../js/db.js"></script>
-  <script src="../js/firebase-config.js"></script>
-  <script src="../js/main.js"></script>
+  <script src="db.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="main.js"></script>
   <script>
-    function showFav(type) {
+    async function showFav(type) {
       if (!AuthManager.requireAuth()) return;
       const favs = DB.getFavorites(AuthManager.currentUser.uid);
       const ids = favs[type] || [];
       const el = document.getElementById('fav-content');
       if (type === 'pdfs') {
-        const pdfs = DB.getPDFs().filter(p => ids.includes(p.id));
+        el.innerHTML = '<p style="color:var(--text-muted);">Loading...</p>';
+        let all = [];
+        try { all = await (await fetch('/api/pdfs')).json(); } catch {}
+        const pdfs = all.filter(p => ids.includes(p.id));
         el.innerHTML = pdfs.length ? pdfs.map(p =>
           '<div class="note-card"><div class="note-icon"><i class="fas fa-file-pdf"></i></div><h4 class="note-title">'+p.title+'</h4><div class="note-meta">'+p.exam+' · '+p.pages+' pages</div>'+
-          '<button class="btn btn-secondary btn-sm mt-2" onclick="DB.toggleFavorite(AuthManager.currentUser.uid,\'pdfs\',\''+p.id+'\');showFav(\'pdfs\')">Remove</button></div>'
+          '<div class="flex gap-2 mt-2"><a href="/api/pdfs/'+p.id+'/file" class="btn btn-primary btn-sm">Download</a>'+
+          '<button class="btn btn-secondary btn-sm" onclick="DB.toggleFavorite(AuthManager.currentUser.uid,\'pdfs\','+p.id+');showFav(\'pdfs\')">Remove</button></div></div>'
         ).join('') : '<p style="color:var(--text-muted);grid-column:1/-1;">No saved PDFs. Browse <a href="pdf-library.html" style="color:var(--accent-primary);">PDF Library</a></p>';
       } else {
         const videos = DB.getVideos().filter(v => ids.includes(v.id));

@@ -1,7 +1,9 @@
 import { createHash, createHmac, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 
 const SESSION_LENGTH = 8 * 60 * 60;
-const cookieName = 'studyai_admin';
+// Version the cookie when broadening its path so older /api/admin cookies
+// cannot survive a logout through the new /api path.
+const cookieName = 'studyai_admin_v2';
 
 export function hashPassword(password) {
   if (typeof password !== 'string' || password.length < 12) throw new Error('Password must be at least 12 characters.');
@@ -55,10 +57,10 @@ export function readSessionCookie(request) {
 
 export function sessionCookie(request, token) {
   const secure = new URL(request.url).protocol === 'https:' ? '; Secure' : '';
-  return `${cookieName}=${token}; Path=/api/admin; HttpOnly; SameSite=Strict; Max-Age=${SESSION_LENGTH}${secure}`;
+  return `${cookieName}=${token}; Path=/api; HttpOnly; SameSite=Strict; Max-Age=${SESSION_LENGTH}${secure}`;
 }
 
 export function clearSessionCookie(request) {
   const secure = new URL(request.url).protocol === 'https:' ? '; Secure' : '';
-  return `${cookieName}=; Path=/api/admin; HttpOnly; SameSite=Strict; Max-Age=0${secure}`;
+  return `${cookieName}=; Path=/api; HttpOnly; SameSite=Strict; Max-Age=0${secure}`;
 }

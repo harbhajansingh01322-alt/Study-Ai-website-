@@ -6,17 +6,17 @@
   <title>Previous Year Papers - StudyAI</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <nav class="navbar">
     <div class="nav-container">
-      <a href="../index.html" class="logo">
+      <a href="index.html" class="logo">
         <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
         <span>Study<span class="gradient-text">AI</span></span>
       </a>
       <div class="nav-links">
-        <a href="../index.html" class="nav-link">Home</a>
+        <a href="index.html" class="nav-link">Home</a>
         <a href="papers.html" class="nav-link active">Previous Papers</a>
         <a href="pdf-library.html" class="nav-link">PDF Library</a>
         <a href="quiz.html" class="nav-link">Quizzes</a>
@@ -66,45 +66,56 @@
   </div>
   <div id="toast-container" class="toast-container"></div>
 
-  <script src="../js/db.js"></script>
-  <script src="../js/firebase-config.js"></script>
-  <script src="../js/main.js"></script>
+  <script src="db.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="main.js"></script>
   <script>
-    const papers = [
-      { title: 'SSC CGL 2024 Tier-1', exam: 'ssc', subject: 'All', year: 2024, pages: 25 },
-      { title: 'SSC CGL 2023 Tier-1', exam: 'ssc', subject: 'All', year: 2023, pages: 25 },
-      { title: 'SSC CHSL 2024', exam: 'ssc', subject: 'All', year: 2024, pages: 20 },
-      { title: 'IBPS PO Prelims 2023', exam: 'banking', subject: 'All', year: 2023, pages: 30 },
-      { title: 'SBI Clerk Prelims 2024', exam: 'banking', subject: 'All', year: 2024, pages: 28 },
-      { title: 'UPSC Prelims GS 2024', exam: 'upsc', subject: 'GS', year: 2024, pages: 40 },
-      { title: 'UPSC Prelims CSAT 2024', exam: 'upsc', subject: 'CSAT', year: 2024, pages: 35 },
-      { title: 'RRB NTPC 2021 CBT-1', exam: 'railway', subject: 'All', year: 2021, pages: 32 },
-      { title: 'Haryana CET 2023', exam: 'haryana', subject: 'All', year: 2023, pages: 22 },
-      { title: 'SSC MTS 2023', exam: 'ssc', subject: 'All', year: 2023, pages: 18 }
-    ];
+    let papers = [];
 
     function render(list) {
       document.getElementById('papers-grid').innerHTML = list.map(p => `
         <div class="note-card">
           <div class="note-icon"><i class="fas fa-file-download"></i></div>
           <h4 class="note-title">${p.title}</h4>
-          <div class="note-meta">${p.exam.toUpperCase()} • ${p.subject} • ${p.year} • ${p.pages} pages</div>
-          <button class="btn btn-primary btn-sm mt-2" onclick="StudyAI.Toast.show('Downloading ${p.title}...','success')">
+          <div class="note-meta">${(p.exam || 'All').toUpperCase()} • ${p.pages} pages</div>
+          <button class="btn btn-primary btn-sm mt-2" onclick="downloadPaper(${p.id}, '${p.title.replace(/'/g, "\\'")}')">
             <i class="fas fa-download"></i> Download
           </button>
         </div>
-      `).join('');
+      `).join('') || '<p style="color:var(--text-muted);">No previous year papers uploaded yet. Ask an admin to add some from the Admin panel.</p>';
+    }
+
+    function downloadPaper(id, title) {
+      const a = document.createElement('a');
+      a.href = '/api/pdfs/' + id + '/file';
+      a.click();
+      StudyAI.Toast.show('Downloading ' + title + '...', 'success');
+    }
+
+    function filterByExam(exam) {
+      render(exam === 'all' ? papers : papers.filter(p => (p.exam || '').toLowerCase().includes(exam)));
     }
 
     document.querySelectorAll('.paper-filter').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.paper-filter').forEach(b => { b.classList.remove('active','btn-primary'); b.classList.add('btn-secondary'); });
         btn.classList.add('active','btn-primary'); btn.classList.remove('btn-secondary');
-        const exam = btn.dataset.exam;
-        render(exam === 'all' ? papers : papers.filter(p => p.exam === exam));
+        filterByExam(btn.dataset.exam);
       });
     });
-    render(papers);
+
+    async function loadPapers() {
+      document.getElementById('papers-grid').innerHTML = '<p style="color:var(--text-muted);">Loading...</p>';
+      try {
+        const res = await fetch('/api/pdfs');
+        const all = await res.json();
+        papers = all.filter(p => p.category === 'papers');
+      } catch {
+        papers = [];
+      }
+      render(papers);
+    }
+    document.addEventListener('DOMContentLoaded', loadPapers);
   </script>
 </body>
 </html>
