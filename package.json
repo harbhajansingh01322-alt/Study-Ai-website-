@@ -1,0 +1,16 @@
+{
+  "name": "studyai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "StudyAI - AI-powered educational platform",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0",
+    "@netlify/database": "^1.0.0",
+    "@netlify/functions": "^2.8.2",
+    "drizzle-orm": "beta"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.2",
+    "drizzle-kit": "beta"
+  }
+}

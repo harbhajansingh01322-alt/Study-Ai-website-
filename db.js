@@ -308,24 +308,18 @@ const DB = {
   },
 
   // ---------- Search index ----------
-  search(query) {
+  // Quizzes and videos are still built into the app, so they stay local.
+  // PDFs, study material and blog posts now live in the real database, so
+  // this fetches them from the API instead of a hardcoded list.
+  async search(query) {
     const q = (query || '').toLowerCase().trim();
     if (!q) return [];
     const results = [];
-    this.getPDFs().forEach(p => {
-      if (p.title.toLowerCase().includes(q) || p.exam.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)) {
-        results.push({ type: 'PDF', title: p.title, link: 'pdf-library.html?id=' + p.id, id: p.id });
-      }
-    });
+
     const bank = this.getQuizBank();
     Object.values(bank).forEach(quiz => {
       if (quiz.title.toLowerCase().includes(q) || quiz.category.toLowerCase().includes(q)) {
         results.push({ type: 'Quiz', title: quiz.title, link: 'quiz.html?start=' + quiz.id, id: quiz.id });
-      }
-    });
-    this.getBlogs().forEach(b => {
-      if (b.title.toLowerCase().includes(q) || b.category.toLowerCase().includes(q) || b.excerpt.toLowerCase().includes(q)) {
-        results.push({ type: 'Blog', title: b.title, link: 'blog.html?id=' + b.id, id: b.id });
       }
     });
     this.getVideos().forEach(v => {
@@ -333,18 +327,32 @@ const DB = {
         results.push({ type: 'Video', title: v.title, link: 'videos.html?v=' + v.id, id: v.id });
       }
     });
-    const materials = [
-      { title: 'Class 10 Science', cat: 'class6-12' }, { title: 'Class 12 Mathematics', cat: 'class6-12' },
-      { title: 'B.Com Accountancy', cat: 'bcom' }, { title: 'SSC General Awareness', cat: 'ssc' },
-      { title: 'CGL Quantitative Aptitude', cat: 'cgl' }, { title: 'UPSC Prelims GS', cat: 'upsc' },
-      { title: 'IBPS PO Banking Awareness', cat: 'banking' }, { title: 'RRB NTPC Guide', cat: 'railway' },
-      { title: 'Haryana CET Complete', cat: 'haryana' }
-    ];
-    materials.forEach(m => {
-      if (m.title.toLowerCase().includes(q) || m.cat.includes(q)) {
-        results.push({ type: 'Course', title: m.title, link: 'study-material.html?cat=' + m.cat, id: m.cat });
-      }
-    });
+
+    try {
+      const [pdfs, materials, blogs] = await Promise.all([
+        fetch('/api/pdfs').then(r => r.json()),
+        fetch('/api/materials').then(r => r.json()),
+        fetch('/api/blog').then(r => r.json())
+      ]);
+      pdfs.forEach(p => {
+        if (p.title.toLowerCase().includes(q) || p.exam.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)) {
+          results.push({ type: 'PDF', title: p.title, link: 'pdf-library.html?id=' + p.id, id: p.id });
+        }
+      });
+      materials.forEach(m => {
+        if (m.title.toLowerCase().includes(q) || m.category.toLowerCase().includes(q)) {
+          results.push({ type: 'Course', title: m.title, link: 'study-material.html?cat=' + m.category, id: m.id });
+        }
+      });
+      blogs.forEach(b => {
+        if (b.title.toLowerCase().includes(q) || b.category.toLowerCase().includes(q) || b.excerpt.toLowerCase().includes(q)) {
+          results.push({ type: 'Blog', title: b.title, link: 'blog.html?id=' + b.id, id: b.id });
+        }
+      });
+    } catch {
+      // API unreachable — still return the local quiz/video matches above.
+    }
+
     return results;
   }
 };

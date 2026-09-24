@@ -6,14 +6,14 @@
   <title>PDF Library - StudyAI</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <nav class="navbar">
     <div class="nav-container">
-      <a href="../index.html" class="logo"><div class="logo-icon"><i class="fas fa-graduation-cap"></i></div><span>Study<span class="gradient-text">AI</span></span></a>
+      <a href="index.html" class="logo"><div class="logo-icon"><i class="fas fa-graduation-cap"></i></div><span>Study<span class="gradient-text">AI</span></span></a>
       <div class="nav-links">
-        <a href="../index.html" class="nav-link">Home</a>
+        <a href="index.html" class="nav-link">Home</a>
         <a href="study-material.html" class="nav-link">Study Material</a>
         <a href="pdf-library.html" class="nav-link active">PDF Library</a>
         <a href="quiz.html" class="nav-link">Quizzes</a>
@@ -28,7 +28,7 @@
     </div>
   </nav>
   <div class="mobile-nav" id="mobile-nav">
-    <a href="../index.html" class="nav-link">Home</a>
+    <a href="index.html" class="nav-link">Home</a>
     <a href="pdf-library.html" class="nav-link">PDF Library</a>
     <a href="papers.html" class="nav-link">Previous Papers</a>
   </div>
@@ -91,52 +91,67 @@
     </div>
   </div>
   <div id="toast-container" class="toast-container"></div>
-  <script src="../js/db.js"></script>
-  <script src="../js/firebase-config.js"></script>
-  <script src="../js/main.js"></script>
+  <script src="db.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="main.js"></script>
   <script>
     let activeCat = 'all';
     let currentPDF = null;
+    let allPDFs = [];
+
+    async function loadPDFs() {
+      document.getElementById('pdf-grid').innerHTML = '<p style="color:var(--text-muted);">Loading...</p>';
+      try {
+        const res = await fetch('/api/pdfs');
+        allPDFs = await res.json();
+      } catch {
+        allPDFs = [];
+      }
+      renderPDFs();
+    }
+
     function setCat(cat, btn) {
       activeCat = cat;
       document.querySelectorAll('.pdf-cat').forEach(b => { b.classList.remove('active','btn-primary'); b.classList.add('btn-secondary'); });
       btn.classList.add('active','btn-primary'); btn.classList.remove('btn-secondary');
-      filterPDFs();
+      renderPDFs();
     }
-    function filterPDFs() {
+    function filterPDFs() { renderPDFs(); }
+    function renderPDFs() {
       const q = (document.getElementById('pdf-search').value || '').toLowerCase();
-      let list = DB.getPDFs();
+      let list = allPDFs;
       if (activeCat !== 'all') list = list.filter(p => p.category === activeCat);
       if (q) list = list.filter(p => p.title.toLowerCase().includes(q) || p.exam.toLowerCase().includes(q));
       document.getElementById('pdf-grid').innerHTML = list.map(p =>
         '<div class="note-card"><div class="note-icon"><i class="fas fa-file-pdf"></i></div>' +
         '<h4 class="note-title">' + p.title + '</h4>' +
-        '<div class="note-meta">' + p.exam + ' · ' + p.pages + ' pages · ' + p.size + '</div>' +
+        '<div class="note-meta">' + p.exam + ' · ' + p.pages + ' pages · ' + formatSize(p.fileSize) + ' · ' + (p.downloads || 0) + ' downloads</div>' +
         '<div class="flex gap-2 mt-2">' +
-        '<button class="btn btn-primary btn-sm" onclick="previewPDF(\'' + p.id + '\')"><i class="fas fa-eye"></i> Preview</button>' +
-        '<button class="btn btn-secondary btn-sm" onclick="downloadPDF(\'' + p.id + '\')"><i class="fas fa-download"></i></button>' +
-        '<button class="btn btn-ghost btn-sm" onclick="favPDF(\'' + p.id + '\')"><i class="fas fa-heart"></i></button></div></div>'
-      ).join('') || '<p style="color:var(--text-muted);">No PDFs found.</p>';
+        '<button class="btn btn-primary btn-sm" onclick="previewPDF(' + p.id + ')"><i class="fas fa-eye"></i> Preview</button>' +
+        '<button class="btn btn-secondary btn-sm" onclick="downloadPDF(' + p.id + ')"><i class="fas fa-download"></i></button>' +
+        '<button class="btn btn-ghost btn-sm" onclick="favPDF(' + p.id + ')"><i class="fas fa-heart"></i></button></div></div>'
+      ).join('') || '<p style="color:var(--text-muted);">No PDFs found yet. Ask an admin to upload some from the Admin panel.</p>';
+    }
+    function formatSize(bytes) {
+      if (!bytes) return '0 KB';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     }
     function previewPDF(id) {
-      currentPDF = DB.getPDFs().find(p => p.id === id);
+      currentPDF = allPDFs.find(p => p.id === id);
       if (!currentPDF) return;
       document.getElementById('preview-title').textContent = currentPDF.title;
-      document.getElementById('preview-desc').textContent = currentPDF.content || (currentPDF.exam + ' · ' + currentPDF.pages + ' pages');
+      document.getElementById('preview-desc').textContent = currentPDF.description || (currentPDF.exam + ' · ' + currentPDF.pages + ' pages');
       openModal('preview-modal');
     }
     function downloadPDF(id) {
-      const p = DB.getPDFs().find(x => x.id === id) || currentPDF;
+      const p = allPDFs.find(x => x.id === id) || currentPDF;
       if (!p) return;
-      const content = 'StudyAI - ' + p.title + '\n\n' + (p.content || '') + '\n\nExam: ' + p.exam + '\nPages: ' + p.pages;
-      const blob = new Blob([content], { type: 'text/plain' });
       const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = p.title.replace(/\s+/g, '_') + '.txt';
+      a.href = '/api/pdfs/' + p.id + '/file';
+      a.download = p.fileName || (p.title.replace(/\s+/g, '_') + '.pdf');
       a.click();
-      Toast.show('Downloaded: ' + p.title, 'success');
-      p.downloads = (p.downloads || 0) + 1;
-      DB.savePDF(p);
+      Toast.show('Downloading: ' + p.title, 'success');
     }
     function downloadCurrent() { if (currentPDF) downloadPDF(currentPDF.id); }
     function favPDF(id) {
@@ -145,7 +160,7 @@
       Toast.show(added ? 'Added to favorites' : 'Removed from favorites', added ? 'success' : 'info');
     }
     function favCurrent() { if (currentPDF) favPDF(currentPDF.id); }
-    document.addEventListener('DOMContentLoaded', filterPDFs);
+    document.addEventListener('DOMContentLoaded', loadPDFs);
   </script>
 </body>
 </html>
