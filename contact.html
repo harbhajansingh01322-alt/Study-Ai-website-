@@ -6,17 +6,17 @@
   <title>Contact - StudyAI</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <nav class="navbar">
     <div class="nav-container">
-      <a href="../index.html" class="logo">
+      <a href="index.html" class="logo">
         <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
         <span>Study<span class="gradient-text">AI</span></span>
       </a>
       <div class="nav-links">
-        <a href="../index.html" class="nav-link">Home</a>
+        <a href="index.html" class="nav-link">Home</a>
         <a href="about.html" class="nav-link">About</a>
         <a href="contact.html" class="nav-link active">Contact</a>
       </div>
@@ -78,22 +78,29 @@
       </div>
     </div>
   </section>
-  <script src="../js/db.js"></script>
-  <script src="../js/firebase-config.js"></script>
-  <script src="../js/db.js"></script>
-  <script src="../js/firebase-config.js"></script>
-  <script src="../js/main.js"></script>
+  <script src="db.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="main.js"></script>
   <script>
-    function submitContact(form) {
+    async function submitContact(form) {
       const inputs = form.querySelectorAll('input, textarea');
       const name = inputs[0].value.trim();
       const email = inputs[1].value.trim();
       const subject = inputs[2].value.trim();
       const message = inputs[3].value.trim();
       if (!name || !email || !subject || !message) { Toast.show('Fill all fields','error'); return; }
-      DB.addMessage({ name, email, subject, message });
-      Toast.show('Message sent successfully! We will reply soon.','success');
-      form.reset();
+      try {
+        const res = await fetch('/api/messages', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ name, email, subject, message })
+        });
+        if (!res.ok) throw new Error('failed');
+        Toast.show('Message sent successfully! We will reply soon.','success');
+        form.reset();
+      } catch {
+        Toast.show('Could not send message. Please try again.','error');
+      }
     }
   </script>
   <style>@media(max-width:768px){.contact-grid{grid-template-columns:1fr!important;}}</style>

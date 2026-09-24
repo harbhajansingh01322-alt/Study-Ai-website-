@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Free online resume builder for students and job seekers. Fill in your details, pick a template and download a clean professional resume as PDF. No signup required.">
+  <meta name="keywords" content="resume builder, free CV maker, student resume, fresher resume format, download resume PDF">
+  <meta property="og:title" content="Free Resume Builder - StudyAI">
+  <meta property="og:description" content="Build a professional resume in minutes and download it as PDF. Free for students and freshers.">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://classy-meerkat-758654.netlify.app/resume.html">
+  <title>Free Resume Builder - Create & Download CV PDF | StudyAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+  <style>
+    .resume-layout { display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem; align-items:start; }
+    @media (max-width: 900px) { .resume-layout { grid-template-columns: 1fr; } }
+    .rb-section { border:1px solid var(--border); border-radius:12px; padding:1rem; margin-bottom:1rem; }
+    .rb-section > h4 { display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem; }
+    .rb-row { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; }
+    @media (max-width: 600px) { .rb-row { grid-template-columns:1fr; } }
+    .rb-entry { border:1px dashed var(--border); border-radius:10px; padding:0.75rem; margin-bottom:0.75rem; position:relative; }
+    .rb-remove { position:absolute; top:0.5rem; right:0.5rem; background:none; border:none; color:#ef4444; cursor:pointer; font-size:0.9rem; }
+    .tpl-pick { display:flex; gap:0.5rem; flex-wrap:wrap; }
+    .tpl-btn { padding:0.4rem 0.9rem; border-radius:999px; border:1px solid var(--border); background:transparent; color:var(--text-muted); cursor:pointer; font-size:0.85rem; font-weight:600; }
+    .tpl-btn.active { background:var(--primary, #6366f1); color:#fff; border-color:transparent; }
+
+    /* --- Printable resume sheet --- */
+    #sheet { background:#fff; color:#1a1a1a; padding:2.25rem; border-radius:10px; box-shadow:var(--shadow-lg); font-size:13.5px; line-height:1.55; }
+    #sheet h1 { font-size:1.75rem; margin:0; color:#111; letter-spacing:-0.02em; }
+    #sheet h3 { font-size:0.82rem; text-transform:uppercase; letter-spacing:0.09em; margin:1.25rem 0 0.5rem; padding-bottom:0.25rem; border-bottom:2px solid #e5e7eb; color:#111; }
+    #sheet .rs-contact { color:#555; font-size:0.85rem; margin-top:0.35rem; }
+    #sheet .rs-item { margin-bottom:0.7rem; }
+    #sheet .rs-item-head { display:flex; justify-content:space-between; gap:1rem; font-weight:600; }
+    #sheet .rs-sub { color:#555; font-size:0.85rem; }
+    #sheet .rs-date { color:#777; font-size:0.8rem; white-space:nowrap; font-weight:500; }
+    #sheet ul { margin:0.25rem 0 0 1.1rem; }
+    #sheet .rs-chips { display:flex; flex-wrap:wrap; gap:0.35rem; }
+    #sheet .rs-chip { background:#f1f3f9; border-radius:5px; padding:0.15rem 0.55rem; font-size:0.8rem; }
+    #sheet.accent h1 { color:var(--acc); }
+    #sheet.accent h3 { color:var(--acc); border-bottom-color:var(--acc); }
+    #sheet.bar { padding-top:0; }
+    #sheet.bar .rs-head { background:var(--acc); color:#fff; margin:0 -2.25rem 1rem; padding:1.75rem 2.25rem; }
+    #sheet.bar .rs-head h1, #sheet.bar .rs-head .rs-contact { color:#fff; }
+
+    @media print {
+      body > *:not(#print-root) { display:none !important; }
+      #print-root, #print-root * { visibility:visible; }
+      #print-root { position:absolute; inset:0; margin:0; padding:0; }
+      #sheet { box-shadow:none; border-radius:0; padding:0.5in; font-size:12px; }
+      @page { size:A4; margin:0; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        <span>Study<span class="gradient-text">AI</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="tools.html" class="nav-link">Tools</a>
+        <a href="resume.html" class="nav-link active">Resume Builder</a>
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+      </div>
+      <div class="nav-actions">
+        <button class="icon-btn" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button class="btn btn-primary btn-sm" id="login-btn" onclick="openModal('auth-modal')">Login</button>
+        <button class="mobile-menu-btn" onclick="toggleMobileNav()"><i class="fas fa-bars"></i></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="mobile-nav" id="mobile-nav">
+    <a href="index.html" class="nav-link">Home</a>
+    <a href="tools.html" class="nav-link">Tools</a>
+    <a href="resume.html" class="nav-link">Resume Builder</a>
+    <a href="dashboard.html" class="nav-link">Dashboard</a>
+  </div>
+
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">📄 Resume Builder</h1>
+      <p class="page-subtitle">Fill your details, see the preview update live, then download as PDF</p>
+    </div>
+  </div>
+
+  <section class="section" style="padding-top:1rem;">
+    <div class="container">
+      <div class="resume-layout">
+
+        <!-- ============ FORM ============ -->
+        <div class="card">
+          <div class="rb-section">
+            <h4><i class="fas fa-user"></i> Personal Details</h4>
+            <div class="form-group"><label>Full Name</label><input class="form-input" id="f-name" placeholder="Rahul Sharma"></div>
+            <div class="form-group"><label>Job Title</label><input class="form-input" id="f-title" placeholder="B.Tech Graduate | Aspiring Data Analyst"></div>
+            <div class="rb-row">
+              <div class="form-group"><label>Email</label><input class="form-input" id="f-email" placeholder="rahul@example.com"></div>
+              <div class="form-group"><label>Phone</label><input class="form-input" id="f-phone" placeholder="+91 98765 43210"></div>
+            </div>
+            <div class="rb-row">
+              <div class="form-group"><label>City</label><input class="form-input" id="f-city" placeholder="Gurugram, Haryana"></div>
+              <div class="form-group"><label>LinkedIn / Portfolio</label><input class="form-input" id="f-link" placeholder="linkedin.com/in/rahul"></div>
+            </div>
+          </div>
+
+          <div class="rb-section">
+            <h4><i class="fas fa-quote-left"></i> Career Objective</h4>
+            <div class="form-group">
+              <textarea class="form-input" id="f-summary" rows="3" placeholder="2-3 lines about your goal and strengths."></textarea>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="RB.suggestSummary()"><i class="fas fa-wand-magic-sparkles"></i> Suggest for me</button>
+          </div>
+
+          <div class="rb-section">
+            <h4><i class="fas fa-graduation-cap"></i> Education</h4>
+            <div id="edu-list"></div>
+            <button class="btn btn-outline btn-sm" onclick="RB.addEntry('edu')"><i class="fas fa-plus"></i> Add education</button>
+          </div>
+
+          <div class="rb-section">
+            <h4><i class="fas fa-briefcase"></i> Experience / Projects</h4>
+            <div id="exp-list"></div>
+            <button class="btn btn-outline btn-sm" onclick="RB.addEntry('exp')"><i class="fas fa-plus"></i> Add entry</button>
+          </div>
+
+          <div class="rb-section">
+            <h4><i class="fas fa-bolt"></i> Skills</h4>
+            <div class="form-group">
+              <input class="form-input" id="f-skills" placeholder="Excel, SQL, Python, Communication">
+              <small style="color:var(--text-muted);">Separate with commas</small>
+            </div>
+          </div>
+
+          <div class="rb-section">
+            <h4><i class="fas fa-certificate"></i> Certifications &amp; Achievements</h4>
+            <div class="form-group">
+              <textarea class="form-input" id="f-extra" rows="3" placeholder="One per line"></textarea>
+            </div>
+          </div>
+
+          <div class="rb-section">
+            <h4><i class="fas fa-palette"></i> Template &amp; Colour</h4>
+            <div class="tpl-pick mb-3" id="tpl-pick">
+              <button class="tpl-btn active" data-tpl="classic">Classic</button>
+              <button class="tpl-btn" data-tpl="accent">Accent</button>
+              <button class="tpl-btn" data-tpl="bar">Header Bar</button>
+            </div>
+            <div class="tpl-pick" id="col-pick">
+              <button class="tpl-btn active" data-col="#4f46e5" style="background:#4f46e5;color:#fff;border-color:transparent;">Indigo</button>
+              <button class="tpl-btn" data-col="#0d9488" style="background:#0d9488;color:#fff;border-color:transparent;">Teal</button>
+              <button class="tpl-btn" data-col="#b91c1c" style="background:#b91c1c;color:#fff;border-color:transparent;">Maroon</button>
+              <button class="tpl-btn" data-col="#1f2937" style="background:#1f2937;color:#fff;border-color:transparent;">Charcoal</button>
+            </div>
+          </div>
+
+          <div class="flex gap-2" style="flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="RB.download()"><i class="fas fa-download"></i> Download PDF</button>
+            <button class="btn btn-secondary" onclick="RB.save()"><i class="fas fa-save"></i> Save</button>
+            <button class="btn btn-ghost" onclick="RB.loadSample()">Load sample</button>
+            <button class="btn btn-ghost" onclick="RB.clearAll()">Clear</button>
+          </div>
+        </div>
+
+        <!-- ============ PREVIEW ============ -->
+        <div id="print-root" style="position:sticky;top:90px;">
+          <div id="sheet" class="classic"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2025 StudyAI. All rights reserved.</p>
+        <div class="social-links">
+          <a href="index.html"><i class="fas fa-home"></i></a>
+          <a href="contact.html"><i class="fas fa-envelope"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="db.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="main.js"></script>
+  <script>
+    const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    const RB = {
+      tpl: 'classic',
+      col: '#4f46e5',
+
+      key() {
+        const u = DB.getCurrentUser();
+        return 'resume_' + (u ? u.uid || u.email : 'guest');
+      },
+
+      // ---------- repeatable entries ----------
+      addEntry(kind, data = {}) {
+        const list = document.getElementById(kind + '-list');
+        const wrap = document.createElement('div');
+        wrap.className = 'rb-entry';
+        const isEdu = kind === 'edu';
+        wrap.innerHTML = `
+          <button class="rb-remove" title="Remove"><i class="fas fa-times"></i></button>
+          <div class="rb-row">
+            <div class="form-group"><label>${isEdu ? 'Degree / Class' : 'Role / Project'}</label>
+              <input class="form-input" data-k="title" placeholder="${isEdu ? 'B.Tech Computer Science' : 'Data Analyst Intern'}"></div>
+            <div class="form-group"><label>${isEdu ? 'School / College' : 'Company / Tech used'}</label>
+              <input class="form-input" data-k="sub" placeholder="${isEdu ? 'MDU Rohtak' : 'Infosys'}"></div>
+          </div>
+          <div class="rb-row">
+            <div class="form-group"><label>Duration</label><input class="form-input" data-k="date" placeholder="2021 - 2025"></div>
+            <div class="form-group"><label>${isEdu ? 'Score' : 'Location'}</label><input class="form-input" data-k="score" placeholder="${isEdu ? '8.2 CGPA' : 'Remote'}"></div>
+          </div>
+          <div class="form-group"><label>Details</label>
+            <textarea class="form-input" data-k="desc" rows="2" placeholder="One point per line"></textarea></div>`;
+        wrap.querySelector('.rb-remove').onclick = () => { wrap.remove(); RB.render(); };
+        wrap.querySelectorAll('[data-k]').forEach(el => {
+          if (data[el.dataset.k]) el.value = data[el.dataset.k];
+          el.addEventListener('input', () => RB.render());
+        });
+        list.appendChild(wrap);
+        this.render();
+      },
+
+      readEntries(kind) {
+        return [...document.querySelectorAll('#' + kind + '-list .rb-entry')].map(row => {
+          const o = {};
+          row.querySelectorAll('[data-k]').forEach(el => o[el.dataset.k] = el.value.trim());
+          return o;
+        }).filter(o => o.title || o.sub || o.desc);
+      },
+
+      collect() {
+        const v = id => (document.getElementById(id).value || '').trim();
+        return {
+          name: v('f-name'), title: v('f-title'), email: v('f-email'), phone: v('f-phone'),
+          city: v('f-city'), link: v('f-link'), summary: v('f-summary'),
+          skills: v('f-skills'), extra: v('f-extra'),
+          edu: this.readEntries('edu'), exp: this.readEntries('exp'),
+          tpl: this.tpl, col: this.col
+        };
+      },
+
+      // ---------- preview ----------
+      render() {
+        const d = this.collect();
+        const sheet = document.getElementById('sheet');
+        sheet.className = d.tpl;
+        sheet.style.setProperty('--acc', d.col);
+
+        const contact = [d.email, d.phone, d.city, d.link].filter(Boolean).map(esc).join('  •  ');
+        const bullets = t => {
+          const lines = (t || '').split('\n').map(s => s.replace(/^[-•]\s*/, '').trim()).filter(Boolean);
+          return lines.length ? `<ul>${lines.map(l => `<li>${esc(l)}</li>`).join('')}</ul>` : '';
+        };
+        const block = (label, items) => !items.length ? '' : `<h3>${label}</h3>` + items.map(it => `
+          <div class="rs-item">
+            <div class="rs-item-head"><span>${esc(it.title) || '&nbsp;'}</span><span class="rs-date">${esc(it.date)}</span></div>
+            <div class="rs-sub">${[it.sub, it.score].filter(Boolean).map(esc).join(' — ')}</div>
+            ${bullets(it.desc)}
+          </div>`).join('');
+
+        const skills = d.skills.split(',').map(s => s.trim()).filter(Boolean);
+        const head = `
+          <div class="rs-head">
+            <h1>${esc(d.name) || 'Your Name'}</h1>
+            ${d.title ? `<div class="rs-contact" style="font-weight:600;">${esc(d.title)}</div>` : ''}
+            ${contact ? `<div class="rs-contact">${contact}</div>` : ''}
+          </div>`;
+
+        sheet.innerHTML = head
+          + (d.summary ? `<h3>Career Objective</h3><p>${esc(d.summary)}</p>` : '')
+          + block('Education', d.edu)
+          + block('Experience &amp; Projects', d.exp)
+          + (skills.length ? `<h3>Skills</h3><div class="rs-chips">${skills.map(s => `<span class="rs-chip">${esc(s)}</span>`).join('')}</div>` : '')
+          + (d.extra.trim() ? `<h3>Certifications &amp; Achievements</h3>${bullets(d.extra)}` : '');
+      },
+
+      // ---------- actions ----------
+      download() {
+        if (!document.getElementById('f-name').value.trim()) {
+          Toast.show('Add your name first.', 'error');
+          return;
+        }
+        Toast.show('Opening print dialog — choose "Save as PDF".', 'info');
+        setTimeout(() => window.print(), 400);
+      },
+
+      save() {
+        DB.set(this.key(), this.collect());
+        Toast.show('Resume saved on this device.', 'success');
+      },
+
+      restore() {
+        const d = DB.get(this.key(), null);
+        if (!d) { this.addEntry('edu'); this.addEntry('exp'); this.render(); return; }
+        this.fill(d);
+        Toast.show('Loaded your saved resume.', 'info');
+      },
+
+      fill(d) {
+        const set = (id, val) => document.getElementById(id).value = val || '';
+        set('f-name', d.name); set('f-title', d.title); set('f-email', d.email);
+        set('f-phone', d.phone); set('f-city', d.city); set('f-link', d.link);
+        set('f-summary', d.summary); set('f-skills', d.skills); set('f-extra', d.extra);
+        document.getElementById('edu-list').innerHTML = '';
+        document.getElementById('exp-list').innerHTML = '';
+        (d.edu && d.edu.length ? d.edu : [{}]).forEach(e => this.addEntry('edu', e));
+        (d.exp && d.exp.length ? d.exp : [{}]).forEach(e => this.addEntry('exp', e));
+        if (d.tpl) this.pickTpl(d.tpl);
+        if (d.col) this.pickCol(d.col);
+        this.render();
+      },
+
+      clearAll() {
+        if (!confirm('Clear everything from this resume?')) return;
+        DB.remove(this.key());
+        document.querySelectorAll('.card .form-input').forEach(el => el.value = '');
+        document.getElementById('edu-list').innerHTML = '';
+        document.getElementById('exp-list').innerHTML = '';
+        this.addEntry('edu'); this.addEntry('exp');
+        this.render();
+        Toast.show('Cleared.', 'info');
+      },
+
+      suggestSummary() {
+        const name = document.getElementById('f-name').value.trim();
+        const role = document.getElementById('f-title').value.trim() || 'a challenging role';
+        const skills = document.getElementById('f-skills').value.trim();
+        const who = name ? name.split(' ')[0] : 'A';
+        document.getElementById('f-summary').value =
+          `Motivated and detail-oriented candidate seeking ${role}. ` +
+          (skills ? `Strong working knowledge of ${skills}. ` : '') +
+          `Quick learner who enjoys solving practical problems and is keen to contribute to a growing team.`;
+        this.render();
+        Toast.show('Objective drafted — edit it in your own words.', 'success');
+      },
+
+      loadSample() {
+        this.fill({
+          name: 'Rahul Sharma', title: 'B.Tech Graduate | Aspiring Data Analyst',
+          email: 'rahul.sharma@example.com', phone: '+91 98765 43210',
+          city: 'Gurugram, Haryana', link: 'linkedin.com/in/rahulsharma',
+          summary: 'Final-year Computer Science graduate with hands-on experience in SQL and Python. Looking for a data analyst role where I can turn raw data into decisions.',
+          skills: 'SQL, Python, Advanced Excel, Power BI, Statistics, Communication',
+          extra: 'Google Data Analytics Certificate (2024)\nWinner, MDU Inter-College Coding Contest 2023\nNSS Volunteer — 120 hours',
+          edu: [
+            { title: 'B.Tech, Computer Science', sub: 'MDU Rohtak', date: '2021 - 2025', score: '8.2 CGPA', desc: '' },
+            { title: 'Senior Secondary (CBSE)', sub: 'DAV Public School', date: '2020 - 2021', score: '89%', desc: '' }
+          ],
+          exp: [
+            { title: 'Data Analyst Intern', sub: 'Infosys', date: 'Jun 2024 - Aug 2024', score: 'Remote', desc: 'Built Power BI dashboards tracking 12 KPIs for the ops team\nAutomated a weekly Excel report, saving about 6 hours a week' },
+            { title: 'Student Result Portal', sub: 'Python, Flask, SQLite', date: '2024', score: 'College project', desc: 'Web portal used by 400+ students to check results\nAdded role-based login for staff and students' }
+          ],
+          tpl: 'accent', col: '#0d9488'
+        });
+      },
+
+      pickTpl(t) {
+        this.tpl = t;
+        document.querySelectorAll('#tpl-pick .tpl-btn').forEach(b => b.classList.toggle('active', b.dataset.tpl === t));
+      },
+      pickCol(c) {
+        this.col = c;
+        document.querySelectorAll('#col-pick .tpl-btn').forEach(b => b.classList.toggle('active', b.dataset.col === c));
+      }
+    };
+    window.RB = RB;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.card .form-input').forEach(el => el.addEventListener('input', () => RB.render()));
+      document.querySelectorAll('#tpl-pick .tpl-btn').forEach(b =>
+        b.onclick = () => { RB.pickTpl(b.dataset.tpl); RB.render(); });
+      document.querySelectorAll('#col-pick .tpl-btn').forEach(b =>
+        b.onclick = () => { RB.pickCol(b.dataset.col); RB.render(); });
+      RB.restore();
+    });
+  </script>
+</body>
+</html>

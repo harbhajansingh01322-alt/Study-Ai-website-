@@ -6,12 +6,12 @@
   <title>Search - StudyAI</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <nav class="navbar">
     <div class="nav-container">
-      <a href="../index.html" class="logo"><div class="logo-icon"><i class="fas fa-graduation-cap"></i></div><span>Study<span class="gradient-text">AI</span></span></a>
+      <a href="index.html" class="logo"><div class="logo-icon"><i class="fas fa-graduation-cap"></i></div><span>Study<span class="gradient-text">AI</span></span></a>
       <div class="nav-actions">
         <button class="icon-btn" id="theme-toggle"><i class="fas fa-moon"></i></button>
         <button class="btn btn-primary btn-sm" id="login-btn" onclick="openModal('auth-modal')">Login</button>
@@ -58,16 +58,21 @@
     </div>
   </div>
   <div id="toast-container" class="toast-container"></div>
-  <script src="../js/db.js"></script>
-  <script src="../js/firebase-config.js"></script>
-  <script src="../js/main.js"></script>
+  <script src="db.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="main.js"></script>
   <script>
-    function runSearch(q) {
+    async function runSearch(q) {
       document.getElementById('search-input').value = q || '';
-      const results = DB.search(q);
-      document.getElementById('search-info').textContent = q
-        ? 'Found ' + results.length + ' result' + (results.length !== 1 ? 's' : '') + ' for "' + q + '"'
-        : 'Enter a search term above.';
+      if (!q) {
+        document.getElementById('search-info').textContent = 'Enter a search term above.';
+        document.getElementById('search-results').innerHTML = '';
+        return;
+      }
+      document.getElementById('search-info').textContent = 'Searching...';
+      const results = await DB.search(q);
+      document.getElementById('search-info').textContent =
+        'Found ' + results.length + ' result' + (results.length !== 1 ? 's' : '') + ' for "' + q + '"';
       const icons = { PDF: 'fa-file-pdf', Quiz: 'fa-question-circle', Blog: 'fa-newspaper', Video: 'fa-play-circle', Course: 'fa-book' };
       document.getElementById('search-results').innerHTML = results.length
         ? results.map(r => '<a href="' + r.link + '" class="note-card"><div class="note-icon"><i class="fas ' + (icons[r.type]||'fa-search') + '"></i></div><h4 class="note-title">' + r.title + '</h4><div class="note-meta">' + r.type + '</div></a>').join('')

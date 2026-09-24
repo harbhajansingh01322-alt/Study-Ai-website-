@@ -258,7 +258,7 @@ const AuthManager = {
     Toast.show('Logged out successfully.', 'info');
     const p = location.pathname;
     if (p.includes('dashboard') || p.includes('admin') || p.includes('favorites')) {
-      location.href = (p.includes('/pages/') || p.includes('/admin/')) ? '../index.html' : 'index.html';
+      location.href = 'index.html';
     }
   },
 
@@ -373,8 +373,7 @@ function toggleMobileNav() {
 }
 function handleGlobalSearch(query) {
   if (!query || !query.trim()) return;
-  const base = (location.pathname.includes('/pages/') || location.pathname.includes('/admin/')) ? '' : 'pages/';
-  location.href = base + 'search.html?q=' + encodeURIComponent(query.trim());
+  location.href = 'search.html?q=' + encodeURIComponent(query.trim());
 }
 
 document.addEventListener('DOMContentLoaded', () => {
