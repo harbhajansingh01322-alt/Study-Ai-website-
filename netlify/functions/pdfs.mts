@@ -16,7 +16,7 @@ export default async (req: Request, context: Context) => {
   }
 
   if (req.method === "POST") {
-    const denied = requireAdmin(req);
+    const denied = await requireAdmin(req);
     if (denied) return denied;
 
     const body = await req.json();
@@ -67,7 +67,7 @@ export default async (req: Request, context: Context) => {
   }
 
   if (req.method === "DELETE") {
-    const denied = requireAdmin(req);
+    const denied = await requireAdmin(req);
     if (denied) return denied;
 
     if (!id) return Response.json({ error: "Missing id." }, { status: 400 });

@@ -1,6 +1,7 @@
 /**
  * StudyAI Quiz Engine - Full working system
  */
+const escapeQuizText = (value) => String(value).replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
 const QuizEngine = {
   currentQuiz: null,
   currentIndex: 0,
@@ -54,12 +55,12 @@ const QuizEngine = {
     const opts = q.options.map((opt, i) => {
       const sel = this.answers[this.currentIndex] === i ? ' selected' : '';
       return '<button type="button" class="option-btn' + sel + '" onclick="QuizEngine.selectAnswer(' + i + ')">' +
-        '<span class="option-letter">' + letters[i] + '</span><span>' + opt + '</span></button>';
+        '<span class="option-letter">' + letters[i] + '</span><span>' + escapeQuizText(opt) + '</span></button>';
     }).join('');
     const isLast = this.currentIndex === this.currentQuiz.questions.length - 1;
     container.innerHTML =
       '<div class="question-card"><div class="question-number">Question ' + (this.currentIndex + 1) +
-      '</div><div class="question-text">' + q.q + '</div><div class="options-list">' + opts +
+      '</div><div class="question-text">' + escapeQuizText(q.q) + '</div><div class="options-list">' + opts +
       '</div></div><div class="flex justify-between mt-3">' +
       '<button class="btn btn-secondary" onclick="QuizEngine.prev()" ' +
       (this.currentIndex === 0 ? 'disabled' : '') + '><i class="fas fa-arrow-left"></i> Previous</button>' +
@@ -122,7 +123,7 @@ const QuizEngine = {
       '<div class="card" style="padding:3rem;text-align:center;max-width:500px;margin:0 auto;">' +
       '<div style="font-size:4rem;margin-bottom:1rem;">' + emoji + '</div>' +
       '<h2 style="margin-bottom:0.5rem;">Quiz Completed!</h2>' +
-      '<p style="color:var(--text-secondary);margin-bottom:1.5rem;">' + this.currentQuiz.title + '</p>' +
+      '<p style="color:var(--text-secondary);margin-bottom:1.5rem;">' + escapeQuizText(this.currentQuiz.title) + '</p>' +
       '<div style="font-size:3rem;font-weight:800;background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">' +
       this.score + '/' + total + '</div>' +
       '<div style="font-size:1.25rem;color:var(--text-secondary);margin-bottom:1.5rem;">' + percent + '% Score</div>' +
@@ -141,13 +142,13 @@ const QuizEngine = {
       const userAns = this.answers[i];
       const isCorrect = userAns === q.answer;
       html += '<div class="question-card mb-3"><div class="question-number">Q' + (i + 1) + ' ' +
-        (isCorrect ? '✅' : '❌') + '</div><div class="question-text">' + q.q + '</div><div class="options-list">';
+        (isCorrect ? '✅' : '❌') + '</div><div class="question-text">' + escapeQuizText(q.q) + '</div><div class="options-list">';
       q.options.forEach((opt, j) => {
         let cls = 'option-btn';
         if (j === q.answer) cls += ' correct';
         if (j === userAns && !isCorrect) cls += ' wrong';
         html += '<div class="' + cls + '" style="cursor:default;"><span class="option-letter">' + letters[j] +
-          '</span><span>' + opt +
+          '</span><span>' + escapeQuizText(opt) +
           (j === q.answer ? ' (Correct)' : '') +
           (j === userAns && !isCorrect ? ' (Your answer)' : '') +
           '</span></div>';

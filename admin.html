@@ -1,417 +1,83 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel - StudyAI</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    .admin-tabs { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.5rem; }
-    .admin-tab { padding:0.55rem 1.1rem; border-radius:10px; border:1px solid var(--border); background:transparent; color:var(--text-muted); cursor:pointer; font-weight:600; font-size:0.9rem; }
-    .admin-tab.active { background:var(--accent-primary, #6366f1); color:#fff; border-color:transparent; }
-    .admin-panel { display:none; }
-    .admin-panel.active { display:block; }
-    .admin-layout { display:grid; grid-template-columns:1fr 1.2fr; gap:1.5rem; align-items:start; }
-    @media (max-width:900px) { .admin-layout { grid-template-columns:1fr; } }
-    .item-row { display:flex; justify-content:space-between; align-items:flex-start; gap:0.75rem; padding:0.85rem; border:1px solid var(--border); border-radius:10px; margin-bottom:0.6rem; }
-    .item-row .meta { font-size:0.8rem; color:var(--text-muted); margin-top:0.2rem; }
-    .item-row .msg-body { font-size:0.85rem; color:var(--text-secondary); margin-top:0.35rem; }
-    .item-row.unread { border-color:var(--accent-primary,#6366f1); background:rgba(99,102,241,0.06); }
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Admin Panel · StudyAI</title>
+  <link rel="stylesheet" href="admin.css">
+  <script src="admin.js" defer></script>
 </head>
 <body>
-  <nav class="navbar">
-    <div class="nav-container">
-      <a href="index.html" class="logo">
-        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
-        <span>Study<span class="gradient-text">AI</span></span>
-      </a>
-      <div class="nav-links">
-        <a href="index.html" class="nav-link">Home</a>
-        <a href="dashboard.html" class="nav-link">Dashboard</a>
-        <a href="admin.html" class="nav-link active">Admin</a>
+  <main id="auth-screen" class="auth-screen">
+    <div class="auth-intro">
+      <a class="auth-brand" href="index.html"><span class="brand-mark">✦</span> Study<span>AI</span></a>
+      <div class="auth-intro-copy">
+        <span class="eyebrow light">THE CONTENT STUDIO</span>
+        <h1>Everything you need to run your learning space.</h1>
+        <p>Organize courses, publish resources, and keep your community moving from one place.</p>
       </div>
-      <div class="nav-actions">
-        <button class="icon-btn" id="theme-toggle"><i class="fas fa-moon"></i></button>
-        <button class="btn btn-primary btn-sm" id="login-btn" onclick="openModal('auth-modal')">Login</button>
-        <div class="user-menu hidden" id="user-menu"><span id="user-name" style="font-weight:600;margin-right:0.5rem;"></span></div>
-        <button class="mobile-menu-btn" onclick="toggleMobileNav()"><i class="fas fa-bars"></i></button>
+      <p class="auth-intro-foot">A focused workspace for the people behind StudyAI.</p>
+      <div class="auth-orbit orbit-one"></div><div class="auth-orbit orbit-two"></div>
+    </div>
+    <div class="auth-panel">
+      <div class="auth-card">
+        <div class="auth-icon">✦</div>
+        <span class="eyebrow">STUDYAI ADMIN</span>
+        <h2 id="auth-title">Welcome back</h2>
+        <p id="auth-description" class="muted">Sign in to manage your workspace.</p>
+        <div id="auth-notice" class="notice">Your changes are saved on Netlify and published content appears on the website immediately.</div>
+        <form id="auth-form">
+          <label for="auth-password">Admin password</label>
+          <input id="auth-password" name="password" type="password" autocomplete="current-password" minlength="12" required placeholder="Enter your password">
+          <p id="auth-error" class="form-error" role="alert" aria-live="polite"></p>
+          <button id="auth-submit" class="button primary auth-submit" type="submit">Sign in <span aria-hidden="true">→</span></button>
+        </form>
+        <p id="auth-hint" class="auth-hint">Use the admin password configured for this Netlify site.</p>
       </div>
     </div>
-  </nav>
+  </main>
 
-  <div class="page-header">
-    <div class="container">
-      <h1 class="page-title">🛠️ Admin Panel</h1>
-      <p class="page-subtitle">Upload PDFs, write study notes, publish blog posts and read contact messages</p>
+  <div id="admin-app" class="app" hidden>
+    <div id="sidebar-scrim" class="sidebar-scrim" hidden></div>
+    <aside id="sidebar" class="sidebar" aria-label="Admin navigation">
+      <a class="sidebar-brand" href="index.html"><span class="brand-mark">✦</span><span>Study<span class="brand-ai">AI</span><small>ADMIN WORKSPACE</small></span></a>
+      <div class="workspace-switch"><span class="workspace-avatar">S</span><span><strong id="workspace-name">StudyAI Academy</strong><small>Content workspace</small></span><span class="switch-chevron">⌄</span></div>
+      <nav id="side-nav" class="side-nav">
+        <p class="nav-label">OVERVIEW</p>
+        <button type="button" data-section="dashboard" class="nav-item active"><span class="nav-icon">▦</span> Dashboard</button>
+        <p class="nav-label">CONTENT</p>
+        <button type="button" data-section="categories" class="nav-item"><span class="nav-icon">▧</span> Categories</button>
+        <button type="button" data-section="courses" class="nav-item"><span class="nav-icon">▤</span> Courses</button>
+        <button type="button" data-section="studyMaterials" class="nav-item"><span class="nav-icon">▥</span> Study Material</button>
+        <button type="button" data-section="pdfs" class="nav-item"><span class="nav-icon">▣</span> PDF Library</button>
+        <button type="button" data-section="videos" class="nav-item"><span class="nav-icon">▷</span> Videos</button>
+        <button type="button" data-section="quizzes" class="nav-item"><span class="nav-icon">◇</span> Quizzes</button>
+        <button type="button" data-section="blogs" class="nav-item"><span class="nav-icon">✎</span> Blog</button>
+        <p class="nav-label">WORKSPACE</p>
+        <button type="button" data-section="users" class="nav-item"><span class="nav-icon">♙</span> Users</button>
+        <button type="button" data-section="settings" class="nav-item"><span class="nav-icon">⚙</span> Settings</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="demo-pill"><span class="dot"></span> Netlify content</div>
+        <a href="index.html" class="site-link">↗ &nbsp; View website</a>
+        <button id="logout-button" type="button" class="site-link logout-link">↪ &nbsp; Sign out</button>
+      </div>
+    </aside>
+    <div class="main-shell">
+      <header class="topbar">
+        <div class="topbar-left"><button id="menu-button" type="button" class="icon-button menu-button" aria-label="Open menu" aria-expanded="false">☰</button><span id="breadcrumb">Overview <span>/</span> Dashboard</span></div>
+        <div class="topbar-right"><span class="topbar-demo"><span class="dot"></span> <span id="workspace-state">Live workspace</span></span><span class="topbar-divider"></span><span class="admin-avatar" title="Admin">SA</span><span class="topbar-name">Admin</span></div>
+      </header>
+      <main id="main-content" class="main-content" tabindex="-1"></main>
     </div>
   </div>
 
-  <section class="section" style="padding-top:1rem;">
-    <div class="container">
-
-      <div id="denied" class="hidden card" style="text-align:center;padding:3rem 1rem;">
-        <i class="fas fa-lock" style="font-size:2rem;color:var(--text-muted);"></i>
-        <h3 class="mt-3">Admin access required</h3>
-        <p style="color:var(--text-muted);" class="mt-2">Login with an account whose email contains "admin" (e.g. admin@studyai.com) to manage content.</p>
-        <button class="btn btn-primary mt-3" onclick="openModal('auth-modal')">Login</button>
-      </div>
-
-      <div id="admin-area" class="hidden">
-        <div class="admin-tabs">
-          <button class="admin-tab active" data-tab="pdfs">📄 PDFs</button>
-          <button class="admin-tab" data-tab="materials">📚 Study Material</button>
-          <button class="admin-tab" data-tab="blog">📰 Blog</button>
-          <button class="admin-tab" data-tab="messages">✉️ Messages</button>
-        </div>
-
-        <!-- ===================== PDFs ===================== -->
-        <div class="admin-panel active" id="panel-pdfs">
-          <div class="admin-layout">
-            <div class="card">
-              <h4 class="mb-3">Upload a PDF</h4>
-              <form id="pdf-form">
-                <div class="form-group"><label>Title</label><input class="form-input" id="pdf-title" required placeholder="Indian Polity Complete Notes"></div>
-                <div class="form-group"><label>Category</label>
-                  <select class="form-input" id="pdf-category">
-                    <option value="notes">Notes</option>
-                    <option value="papers">Previous Papers</option>
-                    <option value="current">Current Affairs</option>
-                    <option value="syllabus">Syllabus</option>
-                  </select>
-                </div>
-                <div class="form-group"><label>Exam</label><input class="form-input" id="pdf-exam" placeholder="UPSC / SSC CGL / Banking / All"></div>
-                <div class="form-group"><label>Pages</label><input class="form-input" type="number" min="0" id="pdf-pages" placeholder="120"></div>
-                <div class="form-group"><label>Description</label><textarea class="form-input" id="pdf-desc" rows="3" placeholder="What this PDF covers"></textarea></div>
-                <div class="form-group"><label>PDF file</label><input class="form-input" type="file" id="pdf-file" accept="application/pdf" required></div>
-                <button class="btn btn-primary w-full" type="submit"><i class="fas fa-upload"></i> Upload</button>
-              </form>
-            </div>
-            <div class="card">
-              <h4 class="mb-3">Existing PDFs (<span id="pdf-count">0</span>)</h4>
-              <div id="pdf-list"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ===================== Study Material ===================== -->
-        <div class="admin-panel" id="panel-materials">
-          <div class="admin-layout">
-            <div class="card">
-              <h4 class="mb-3">Add Study Material</h4>
-              <form id="material-form">
-                <div class="form-group"><label>Title</label><input class="form-input" id="mat-title" required placeholder="Class 10 Science Complete"></div>
-                <div class="form-group"><label>Category</label>
-                  <select class="form-input" id="mat-category">
-                    <option value="class6-12">Class 6-12</option>
-                    <option value="bcom">B.Com</option>
-                    <option value="ssc">SSC</option>
-                    <option value="mts">MTS</option>
-                    <option value="chsl">CHSL</option>
-                    <option value="cgl">CGL</option>
-                    <option value="upsc">UPSC</option>
-                    <option value="banking">Banking</option>
-                    <option value="railway">Railway</option>
-                    <option value="haryana">Haryana CET</option>
-                    <option value="state">State Exams</option>
-                  </select>
-                </div>
-                <div class="rb-row form-group" style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
-                  <div><label>Icon (Font Awesome)</label><input class="form-input" id="mat-icon" value="fa-book" placeholder="fa-flask"></div>
-                  <div><label>Colour</label><input class="form-input" type="color" id="mat-color" value="#6366f1" style="height:44px;"></div>
-                </div>
-                <div class="form-group"><label>Content / Notes</label><textarea class="form-input" id="mat-content" rows="8" required placeholder="Write the actual notes students will read..."></textarea></div>
-                <button class="btn btn-primary w-full" type="submit"><i class="fas fa-plus"></i> Add material</button>
-              </form>
-            </div>
-            <div class="card">
-              <h4 class="mb-3">Existing material (<span id="mat-count">0</span>)</h4>
-              <div id="mat-list"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ===================== Blog ===================== -->
-        <div class="admin-panel" id="panel-blog">
-          <div class="admin-layout">
-            <div class="card">
-              <h4 class="mb-3">Publish a blog post</h4>
-              <form id="blog-form">
-                <div class="form-group"><label>Title</label><input class="form-input" id="blog-title" required placeholder="How to Crack SSC CGL in First Attempt"></div>
-                <div class="form-group"><label>Category</label>
-                  <select class="form-input" id="blog-category">
-                    <option>Exam Tips</option>
-                    <option>Current Affairs</option>
-                    <option>Scholarship</option>
-                    <option>Notification</option>
-                  </select>
-                </div>
-                <div class="form-group"><label>Read time</label><input class="form-input" id="blog-readtime" placeholder="8 min"></div>
-                <div class="form-group"><label>Excerpt (short teaser)</label><textarea class="form-input" id="blog-excerpt" rows="2" placeholder="Leave blank to auto-generate from content"></textarea></div>
-                <div class="form-group"><label>Content</label><textarea class="form-input" id="blog-content" rows="8" required placeholder="Write the full post..."></textarea></div>
-                <button class="btn btn-primary w-full" type="submit"><i class="fas fa-paper-plane"></i> Publish</button>
-              </form>
-            </div>
-            <div class="card">
-              <h4 class="mb-3">Published posts (<span id="blog-count">0</span>)</h4>
-              <div id="blog-list"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ===================== Messages ===================== -->
-        <div class="admin-panel" id="panel-messages">
-          <div class="card">
-            <h4 class="mb-3">Contact messages (<span id="msg-count">0</span>)</h4>
-            <div id="msg-list"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="modal-overlay" id="auth-modal">
-    <div class="modal">
-      <div class="modal-header"><h3>Login</h3><button class="modal-close" onclick="closeModal('auth-modal')"><i class="fas fa-times"></i></button></div>
-      <div class="modal-body">
-        <form id="login-form">
-          <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-input" required></div>
-          <div class="form-group"><label>Password</label><input type="password" id="login-password" class="form-input" required></div>
-          <button type="submit" class="btn btn-primary w-full">Login</button>
-        </form>
-        <form id="signup-form" class="hidden">
-          <div class="form-group"><label>Name</label><input type="text" id="signup-name" class="form-input" required></div>
-          <div class="form-group"><label>Email</label><input type="email" id="signup-email" class="form-input" required></div>
-          <div class="form-group"><label>Password</label><input type="password" id="signup-password" class="form-input" required></div>
-          <button type="submit" class="btn btn-primary w-full">Sign Up</button>
-        </form>
-        <div class="divider">or</div>
-        <button class="btn btn-secondary w-full" onclick="StudyAI.AuthManager.googleLogin()"><i class="fab fa-google"></i> Google</button>
-      </div>
-    </div>
-  </div>
-  <div id="toast-container" class="toast-container"></div>
-
-  <script src="db.js"></script>
-  <script src="firebase-config.js"></script>
-  <script src="main.js"></script>
-  <script>
-    const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
-
-    function adminHeaders() {
-      const u = AuthManager.currentUser;
-      return { 'x-user-role': u ? u.role : '', 'x-user-email': u ? u.email : '' };
-    }
-
-    function checkAccess() {
-      const ok = AuthManager.currentUser && AuthManager.currentUser.role === 'admin';
-      document.getElementById('admin-area').classList.toggle('hidden', !ok);
-      document.getElementById('denied').classList.toggle('hidden', ok);
-      if (ok) loadAll();
-      return ok;
-    }
-
-    document.querySelectorAll('.admin-tab').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
-      });
-    });
-
-    function fmtDate(iso) { return iso ? new Date(iso).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) : ''; }
-    function fmtSize(b) { if (!b) return '0 KB'; return b < 1024*1024 ? (b/1024).toFixed(0)+' KB' : (b/(1024*1024)).toFixed(1)+' MB'; }
-
-    // ---------------- PDFs ----------------
-    async function loadPDFs() {
-      const res = await fetch('/api/pdfs');
-      const rows = await res.json();
-      document.getElementById('pdf-count').textContent = rows.length;
-      document.getElementById('pdf-list').innerHTML = rows.map(p => `
-        <div class="item-row">
-          <div>
-            <strong>${esc(p.title)}</strong>
-            <div class="meta">${esc(p.category)} · ${esc(p.exam)} · ${p.pages} pages · ${fmtSize(p.fileSize)} · ${p.downloads} downloads</div>
-          </div>
-          <button class="btn btn-ghost btn-sm" onclick="deletePDF(${p.id})"><i class="fas fa-trash" style="color:#ef4444;"></i></button>
-        </div>`).join('') || '<p style="color:var(--text-muted);">No PDFs uploaded yet.</p>';
-    }
-    function fileToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result.split(',')[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-    document.getElementById('pdf-form').addEventListener('submit', async e => {
-      e.preventDefault();
-      const file = document.getElementById('pdf-file').files[0];
-      if (!file) { Toast.show('Choose a PDF file.', 'error'); return; }
-      if (file.size > 20 * 1024 * 1024) { Toast.show('File is larger than 20 MB.', 'error'); return; }
-      const btn = e.target.querySelector('button[type=submit]');
-      btn.disabled = true; btn.textContent = 'Uploading...';
-      try {
-        const fileBase64 = await fileToBase64(file);
-        const res = await fetch('/api/pdfs', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json', ...adminHeaders() },
-          body: JSON.stringify({
-            title: document.getElementById('pdf-title').value.trim(),
-            category: document.getElementById('pdf-category').value,
-            exam: document.getElementById('pdf-exam').value.trim() || 'All',
-            pages: document.getElementById('pdf-pages').value || 0,
-            description: document.getElementById('pdf-desc').value.trim(),
-            fileName: file.name,
-            contentType: file.type || 'application/pdf',
-            fileBase64
-          })
-        });
-        if (!res.ok) throw new Error((await res.json()).error || 'Upload failed');
-        Toast.show('PDF uploaded.', 'success');
-        e.target.reset();
-        loadPDFs();
-      } catch (err) {
-        Toast.show(err.message || 'Upload failed.', 'error');
-      } finally {
-        btn.disabled = false; btn.innerHTML = '<i class="fas fa-upload"></i> Upload';
-      }
-    });
-    async function deletePDF(id) {
-      if (!confirm('Delete this PDF?')) return;
-      await fetch('/api/pdfs/' + id, { method: 'DELETE', headers: adminHeaders() });
-      Toast.show('Deleted.', 'info');
-      loadPDFs();
-    }
-
-    // ---------------- Study material ----------------
-    async function loadMaterials() {
-      const res = await fetch('/api/materials');
-      const rows = await res.json();
-      document.getElementById('mat-count').textContent = rows.length;
-      document.getElementById('mat-list').innerHTML = rows.map(m => `
-        <div class="item-row">
-          <div>
-            <strong>${esc(m.title)}</strong>
-            <div class="meta">${esc(m.category)} · ${m.content.length} characters</div>
-          </div>
-          <button class="btn btn-ghost btn-sm" onclick="deleteMaterial(${m.id})"><i class="fas fa-trash" style="color:#ef4444;"></i></button>
-        </div>`).join('') || '<p style="color:var(--text-muted);">No study material yet.</p>';
-    }
-    document.getElementById('material-form').addEventListener('submit', async e => {
-      e.preventDefault();
-      try {
-        const res = await fetch('/api/materials', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json', ...adminHeaders() },
-          body: JSON.stringify({
-            title: document.getElementById('mat-title').value.trim(),
-            category: document.getElementById('mat-category').value,
-            icon: document.getElementById('mat-icon').value.trim() || 'fa-book',
-            color: document.getElementById('mat-color').value,
-            content: document.getElementById('mat-content').value.trim()
-          })
-        });
-        if (!res.ok) throw new Error((await res.json()).error || 'Save failed');
-        Toast.show('Study material added.', 'success');
-        e.target.reset();
-        document.getElementById('mat-icon').value = 'fa-book';
-        document.getElementById('mat-color').value = '#6366f1';
-        loadMaterials();
-      } catch (err) {
-        Toast.show(err.message || 'Save failed.', 'error');
-      }
-    });
-    async function deleteMaterial(id) {
-      if (!confirm('Delete this study material?')) return;
-      await fetch('/api/materials/' + id, { method: 'DELETE', headers: adminHeaders() });
-      Toast.show('Deleted.', 'info');
-      loadMaterials();
-    }
-
-    // ---------------- Blog ----------------
-    async function loadBlog() {
-      const res = await fetch('/api/blog');
-      const rows = await res.json();
-      document.getElementById('blog-count').textContent = rows.length;
-      document.getElementById('blog-list').innerHTML = rows.map(p => `
-        <div class="item-row">
-          <div>
-            <strong>${esc(p.title)}</strong>
-            <div class="meta">${esc(p.category)} · ${fmtDate(p.createdAt)} · ${esc(p.readTime)}</div>
-          </div>
-          <button class="btn btn-ghost btn-sm" onclick="deleteBlog(${p.id})"><i class="fas fa-trash" style="color:#ef4444;"></i></button>
-        </div>`).join('') || '<p style="color:var(--text-muted);">No blog posts yet.</p>';
-    }
-    document.getElementById('blog-form').addEventListener('submit', async e => {
-      e.preventDefault();
-      try {
-        const res = await fetch('/api/blog', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json', ...adminHeaders() },
-          body: JSON.stringify({
-            title: document.getElementById('blog-title').value.trim(),
-            category: document.getElementById('blog-category').value,
-            readTime: document.getElementById('blog-readtime').value.trim() || '5 min',
-            excerpt: document.getElementById('blog-excerpt').value.trim(),
-            content: document.getElementById('blog-content').value.trim()
-          })
-        });
-        if (!res.ok) throw new Error((await res.json()).error || 'Publish failed');
-        Toast.show('Blog post published.', 'success');
-        e.target.reset();
-        loadBlog();
-      } catch (err) {
-        Toast.show(err.message || 'Publish failed.', 'error');
-      }
-    });
-    async function deleteBlog(id) {
-      if (!confirm('Delete this blog post?')) return;
-      await fetch('/api/blog/' + id, { method: 'DELETE', headers: adminHeaders() });
-      Toast.show('Deleted.', 'info');
-      loadBlog();
-    }
-
-    // ---------------- Messages ----------------
-    async function loadMessages() {
-      const res = await fetch('/api/messages', { headers: adminHeaders() });
-      const rows = await res.json();
-      document.getElementById('msg-count').textContent = rows.length;
-      document.getElementById('msg-list').innerHTML = rows.map(m => `
-        <div class="item-row ${m.read ? '' : 'unread'}">
-          <div>
-            <strong>${esc(m.name)}</strong> <span class="meta">${esc(m.email)} · ${fmtDate(m.createdAt)}</span>
-            <div class="meta">${esc(m.subject)}</div>
-            <div class="msg-body">${esc(m.message)}</div>
-          </div>
-          <div class="flex gap-2">
-            ${m.read ? '' : `<button class="btn btn-ghost btn-sm" onclick="markRead(${m.id})" title="Mark read"><i class="fas fa-check"></i></button>`}
-            <button class="btn btn-ghost btn-sm" onclick="deleteMessage(${m.id})"><i class="fas fa-trash" style="color:#ef4444;"></i></button>
-          </div>
-        </div>`).join('') || '<p style="color:var(--text-muted);">No messages yet.</p>';
-    }
-    async function markRead(id) {
-      await fetch('/api/messages/' + id, { method: 'PATCH', headers: adminHeaders() });
-      loadMessages();
-    }
-    async function deleteMessage(id) {
-      if (!confirm('Delete this message?')) return;
-      await fetch('/api/messages/' + id, { method: 'DELETE', headers: adminHeaders() });
-      Toast.show('Deleted.', 'info');
-      loadMessages();
-    }
-
-    function loadAll() {
-      loadPDFs();
-      loadMaterials();
-      loadBlog();
-      loadMessages();
-    }
-
-    document.addEventListener('DOMContentLoaded', () => setTimeout(checkAccess, 50));
-  </script>
+  <dialog id="record-dialog" class="record-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-header"><div><span class="eyebrow">CONTENT WORKSPACE</span><h2 id="dialog-title">Add item</h2></div><button id="dialog-close" class="icon-button" type="button" aria-label="Close dialog">×</button></div>
+    <form id="record-form"><div id="dialog-fields" class="dialog-fields"></div><p id="dialog-error" class="form-error" role="alert"></p><div class="dialog-actions"><button id="dialog-cancel" class="button secondary" type="button">Cancel</button><button class="button primary" type="submit">Save changes</button></div></form>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 </body>
 </html>

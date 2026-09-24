@@ -1,0 +1,39 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/api/admin/*"
+  to = "/.netlify/functions/admin/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/api/content"
+  to = "/.netlify/functions/content"
+  status = 200
+
+[[redirects]]
+  from = "/api/pdf"
+  to = "/.netlify/functions/pdf"
+  status = 200
+
+# Existing pages were committed at the repository root while their links
+# point at /pages, /js, and /css. Keep those old links working on Netlify.
+[[redirects]]
+  from = "/pages/*"
+  to = "/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/js/*"
+  to = "/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/css/*"
+  to = "/:splat"
+  status = 200

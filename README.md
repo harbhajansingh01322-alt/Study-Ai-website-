@@ -1,78 +1,41 @@
-# StudyAI — Complete Working Educational Platform
+# StudyAI
 
-Production-ready client app with real persistence, full quiz engine, AI chat (Gemini), auth, admin, favorites, planner, and more.
+StudyAI is a static learning website with a Netlify admin panel at `/admin.html`. The admin panel manages categories, courses, study material, PDFs, YouTube videos, quizzes, blog posts, sample user profiles, and workspace settings. Published content is read by the public pages from Netlify Functions and stored persistently in Netlify Blobs. Firebase is not used by the admin panel.
 
-## Features (all working)
+## Run locally
 
-| Feature | Status |
-|--------|--------|
-| Login / Signup / Forgot password | Working (local + Firebase-ready) |
-| Google login | Works with Firebase; local fallback without Firebase |
-| PDF Library | Search, preview, download, favorites, admin upload |
-| Quizzes | Timer, scoring, review, leaderboard, history, custom quizzes via admin |
-| AI Assistant | Gemini API when key set; rich offline answers otherwise |
-| Dashboard | Live streak, points, quiz history, favorites count, tasks |
-| Study Planner | Tasks add/edit/delete + Pomodoro (saved) |
-| Favorites | Persist per user |
-| Global search | PDFs, quizzes, blogs, videos, courses |
-| Blog | Loaded from DB; admin can publish |
-| Contact form | Messages stored; visible in Admin |
-| Notifications | Mark read, badge |
-| Dark / Light mode | Saved |
-| Hindi / English | Interface strings |
-| Admin panel | Real analytics, upload PDF, publish blog, manage users/roles, messages |
-
-## Quick start
-
-1. Unzip and open `index.html` in a browser
-   **or** run a local server:
+Node.js 24 or newer is recommended. Install dependencies, configure a local admin password, and start Netlify Dev:
 
 ```bash
-cd StudyAI
-npx serve .
-# or: python3 -m http.server 8080
+npm ci
+npm run admin:hash
+node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))"
 ```
 
-2. **Sign up** with any email + password (6+ characters).
-3. **Admin:** use an email containing `admin` (e.g. `admin@studyai.com`) then open `/admin/`.
+Copy `.env.example` to `.env`. Put the generated `STUDYAI_ADMIN_PASSWORD_HASH` and a separate random value of at least 32 characters in `STUDYAI_SESSION_SECRET`. Keep `.env` private. Then run:
 
-## Gemini AI (real chat)
-
-1. Get a free key: https://aistudio.google.com/apikey
-2. Open **AI Assistant** → paste key in sidebar → **Save Key**
-3. Chat uses Gemini 1.5 Flash. Key is stored in browser settings only.
-
-Optional: set default key in `js/firebase-config.js`:
-
-```js
-window.GEMINI_DEFAULT_KEY = 'your-key';
+```bash
+npm run build
+npm run dev -- --offline --port 8888 --no-open --dir dist
 ```
 
-## Firebase (optional production backend)
+Open `http://localhost:8888/admin.html` and sign in with the password entered when generating the hash. The website is at `http://localhost:8888/`. Netlify Dev uses local blob storage; its content is separate from production. A plain static file server can display the original fallback content, but cannot run the admin API.
 
-1. Create project at Firebase Console
-2. Enable Authentication (Email/Password + Google), Firestore, Storage
-3. Edit `js/firebase-config.js` — set FIREBASE_ENABLED = true and paste config
-4. Add Firebase SDK script tags before firebase-config.js
+## Deploy on Netlify
 
-Without Firebase, the app uses a full localStorage database (`js/db.js`) so every feature still works.
+1. Connect this GitHub repository to a Netlify site. `netlify.toml` builds the `dist` directory and deploys the functions.
+2. In the Netlify site's environment variables, set `STUDYAI_ADMIN_PASSWORD_HASH` and `STUDYAI_SESSION_SECRET`. Generate the hash and secret with the commands above. Use site/function availability for both values and redeploy after adding them.
+3. Visit `https://YOUR-SITE.netlify.app/admin.html` and sign in. Use **Published** to make an item visible on the public website; **Draft** and **Review** stay private.
 
-## Folder structure
+Admin sessions use an HttpOnly, SameSite cookie and same-origin write checks. The password is verified with scrypt in the server function. Changing it in Settings invalidates older sessions. Keep the two environment variables private; never commit `.env` or the generated hash/secret. Netlify Blobs stores content across deploys. The admin UI accepts PDF uploads up to 4 MB or external PDF URLs; uploaded PDFs are served only while their record is published.
 
-```
-StudyAI/
-├── index.html
-├── css/styles.css
-├── js/
-│   ├── db.js
-│   ├── main.js
-│   ├── quiz.js
-│   └── firebase-config.js
-├── pages/
-├── admin/index.html
-└── README.md
+The initial content is copied from this repository's existing pages. Existing sample PDF entries contain text previews, not uploaded PDF binaries. Replace them through the admin panel to provide actual downloadable PDFs. Public page accounts and favorites from the original website still use browser-local data; the **Users** section is explicitly sample data and does not grant access. This admin panel does not change the existing public authentication system.
+
+## Checks
+
+```bash
+npm test
+npm run build
 ```
 
-## License
-
-MIT
+The source files live at the repository root; the build script copies only public HTML, CSS, and JavaScript to `dist`. The `server/` and `netlify/functions/` files provide the server-side API and are never copied into the public directory.

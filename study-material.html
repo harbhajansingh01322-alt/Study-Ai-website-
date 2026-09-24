@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="/live-content.css">
 </head>
 <body>
   <nav class="navbar">
@@ -76,15 +77,6 @@
     </div>
   </section>
 
-  <div class="modal-overlay" id="read-modal">
-    <div class="modal" style="max-width:700px;">
-      <div class="modal-header"><h3 id="read-title">Notes</h3><button class="modal-close" onclick="closeModal('read-modal')"><i class="fas fa-times"></i></button></div>
-      <div class="modal-body">
-        <div id="read-content" style="white-space:pre-wrap;line-height:1.8;color:var(--text-secondary);max-height:60vh;overflow-y:auto;"></div>
-      </div>
-    </div>
-  </div>
-
   <div class="modal-overlay" id="auth-modal">
     <div class="modal">
       <div class="modal-header"><h3>Login</h3><button class="modal-close" onclick="closeModal('auth-modal')"><i class="fas fa-times"></i></button></div>
@@ -111,47 +103,56 @@
   <script src="firebase-config.js"></script>
   <script src="main.js"></script>
   <script>
-    let materials = [];
+    const materials = [
+      { id: 1, title: 'Class 10 Science Complete', cat: 'class6-12', icon: 'fa-flask', lessons: 40, students: '8K', rating: 4.8, color: '#6366f1' },
+      { id: 2, title: 'Class 12 Mathematics', cat: 'class6-12', icon: 'fa-calculator', lessons: 55, students: '12K', rating: 4.9, color: '#8b5cf6' },
+      { id: 3, title: 'Class 9 Social Science', cat: 'class6-12', icon: 'fa-globe', lessons: 35, students: '6K', rating: 4.7, color: '#10b981' },
+      { id: 4, title: 'B.Com Accountancy', cat: 'bcom', icon: 'fa-book', lessons: 48, students: '5K', rating: 4.8, color: '#f59e0b' },
+      { id: 5, title: 'B.Com Business Studies', cat: 'bcom', icon: 'fa-briefcase', lessons: 30, students: '4K', rating: 4.6, color: '#ec4899' },
+      { id: 6, title: 'SSC General Awareness', cat: 'ssc', icon: 'fa-lightbulb', lessons: 50, students: '20K', rating: 4.9, color: '#3b82f6' },
+      { id: 7, title: 'SSC English Language', cat: 'ssc', icon: 'fa-language', lessons: 42, students: '18K', rating: 4.8, color: '#6366f1' },
+      { id: 8, title: 'MTS Complete Guide', cat: 'mts', icon: 'fa-clipboard-list', lessons: 25, students: '7K', rating: 4.7, color: '#10b981' },
+      { id: 9, title: 'CHSL Tier-1 Mastery', cat: 'chsl', icon: 'fa-file-alt', lessons: 38, students: '9K', rating: 4.8, color: '#f59e0b' },
+      { id: 10, title: 'CGL Quantitative Aptitude', cat: 'cgl', icon: 'fa-calculator', lessons: 60, students: '25K', rating: 4.9, color: '#8b5cf6' },
+      { id: 11, title: 'CGL Reasoning Complete', cat: 'cgl', icon: 'fa-brain', lessons: 45, students: '22K', rating: 4.9, color: '#ec4899' },
+      { id: 12, title: 'UPSC Prelims GS Paper 1', cat: 'upsc', icon: 'fa-university', lessons: 80, students: '15K', rating: 4.9, color: '#3b82f6' },
+      { id: 13, title: 'UPSC Polity & Governance', cat: 'upsc', icon: 'fa-landmark', lessons: 50, students: '14K', rating: 4.8, color: '#6366f1' },
+      { id: 14, title: 'IBPS PO Banking Awareness', cat: 'banking', icon: 'fa-university', lessons: 35, students: '11K', rating: 4.8, color: '#10b981' },
+      { id: 15, title: 'SBI Clerk Complete', cat: 'banking', icon: 'fa-piggy-bank', lessons: 40, students: '10K', rating: 4.7, color: '#f59e0b' },
+      { id: 16, title: 'RRB NTPC Guide', cat: 'railway', icon: 'fa-train', lessons: 45, students: '13K', rating: 4.8, color: '#ec4899' },
+      { id: 17, title: 'Railway Group D', cat: 'railway', icon: 'fa-subway', lessons: 30, students: '8K', rating: 4.6, color: '#3b82f6' },
+      { id: 18, title: 'Haryana CET Complete', cat: 'haryana', icon: 'fa-map-marker-alt', lessons: 35, students: '6K', rating: 4.7, color: '#6366f1' },
+      { id: 19, title: 'State PSC General Studies', cat: 'state', icon: 'fa-flag', lessons: 55, students: '9K', rating: 4.8, color: '#8b5cf6' },
+      { id: 20, title: 'Current Affairs Monthly', cat: 'ssc', icon: 'fa-newspaper', lessons: 12, students: '30K', rating: 4.9, color: '#10b981' }
+    ];
 
     function renderMaterials(list) {
       const grid = document.getElementById('materials-grid');
       grid.innerHTML = list.map(m => `
-        <div class="course-card" data-cat="${m.category}">
+        <div class="course-card" data-cat="${m.cat}">
           <div class="course-thumb" style="background:linear-gradient(135deg,${m.color},${m.color}cc);">
             <i class="fas ${m.icon}"></i>
           </div>
           <div class="course-body">
             <h3 class="course-title">${m.title}</h3>
             <div class="course-meta">
-              <span><i class="fas fa-align-left"></i> ${estimateReadTime(m.content)} min read</span>
+              <span><i class="fas fa-book"></i> ${m.lessons} Lessons</span>
+              <span><i class="fas fa-users"></i> ${m.students}</span>
             </div>
             <div class="course-footer">
-              <div class="course-rating"><i class="fas fa-book-open"></i> Notes</div>
-              <button class="btn btn-primary btn-sm" onclick="openMaterial(${m.id})">Open</button>
+              <div class="course-rating"><i class="fas fa-star"></i> ${m.rating}</div>
+              <a href="pdf-library.html" class="btn btn-primary btn-sm">Open</a>
             </div>
           </div>
         </div>
-      `).join('') || '<p style="color:var(--text-muted);grid-column:1/-1;">No study material added yet. Ask an admin to add some from the Admin panel.</p>';
-    }
-
-    function estimateReadTime(text) {
-      const words = (text || '').trim().split(/\s+/).filter(Boolean).length;
-      return Math.max(1, Math.round(words / 200));
-    }
-
-    function openMaterial(id) {
-      const m = materials.find(x => x.id === id);
-      if (!m) return;
-      document.getElementById('read-title').textContent = m.title;
-      document.getElementById('read-content').textContent = m.content;
-      openModal('read-modal');
+      `).join('');
     }
 
     function filterMaterials(query) {
       const q = query.toLowerCase();
       const activeCat = document.querySelector('.cat-btn.active')?.dataset.cat || 'all';
       let filtered = materials;
-      if (activeCat !== 'all') filtered = filtered.filter(m => m.category === activeCat);
+      if (activeCat !== 'all') filtered = filtered.filter(m => m.cat === activeCat);
       if (q) filtered = filtered.filter(m => m.title.toLowerCase().includes(q));
       renderMaterials(filtered);
     }
@@ -168,24 +169,16 @@
       });
     });
 
-    async function loadMaterials() {
-      document.getElementById('materials-grid').innerHTML = '<p style="color:var(--text-muted);">Loading...</p>';
-      try {
-        const res = await fetch('/api/materials');
-        materials = await res.json();
-      } catch {
-        materials = [];
-      }
-      // URL param support
-      const params = new URLSearchParams(location.search);
-      const cat = params.get('cat');
-      if (cat) {
-        const btn = document.querySelector(`[data-cat="${cat}"]`);
-        if (btn) { btn.click(); return; }
-      }
+    // URL param support
+    const params = new URLSearchParams(location.search);
+    const cat = params.get('cat');
+    if (cat) {
+      const btn = document.querySelector(`[data-cat="${cat}"]`);
+      if (btn) btn.click();
+    } else {
       renderMaterials(materials);
     }
-    loadMaterials();
   </script>
+  <script src="/live-content.js" defer></script>
 </body>
 </html>

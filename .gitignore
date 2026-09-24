@@ -1,2 +1,7 @@
-# Local Netlify folder
-.netlify
+node_modules/
+dist/
+.netlify/
+deno.lock
+.env
+.env.*
+!.env.example

@@ -8,7 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="/live-content.css">
 </head>
 <body>
   <nav class="navbar">
@@ -140,9 +141,9 @@
         return '<div class="course-card" style="cursor:pointer;" onclick="QuizEngine.start(\'' + quiz.id + '\')">' +
           '<div class="course-thumb" style="background:linear-gradient(135deg,' + colors[i % colors.length] + ',' + colors[i % colors.length] + 'aa);">' +
           '<i class="fas ' + icons[i % icons.length] + '"></i></div>' +
-          '<div class="course-body"><h3 class="course-title">' + quiz.title + '</h3>' +
+          '<div class="course-body"><h3 class="course-title">' + escapeQuizText(quiz.title) + '</h3>' +
           '<div class="course-meta"><span>' + n + ' Questions</span><span>' + mins + ' min</span></div>' +
-          '<div class="course-footer"><div class="course-rating">' + (quiz.category || 'Quiz') + '</div>' +
+          '<div class="course-footer"><div class="course-rating">' + escapeQuizText(quiz.category || 'Quiz') + '</div>' +
           '<span class="btn btn-primary btn-sm">Start Quiz</span></div></div></div>';
       }).join('');
 
@@ -151,7 +152,7 @@
       if (lb.length) {
         el.innerHTML = lb.slice(0, 10).map((e, i) =>
           '<div style="display:flex;justify-content:space-between;padding:0.75rem 0;border-bottom:1px solid var(--border);">' +
-          '<span><strong>#' + (i+1) + '</strong> ' + e.name + ' · ' + (e.quiz||'') + '</span>' +
+          '<span><strong>#' + (i+1) + '</strong> ' + escapeQuizText(e.name) + ' · ' + escapeQuizText(e.quiz||'') + '</span>' +
           '<span style="color:var(--accent-primary);font-weight:600;">' + e.percent + '% (' + e.score + '/' + e.total + ')</span></div>'
         ).join('');
       }
@@ -159,5 +160,6 @@
       if (start) QuizEngine.start(start);
     });
   </script>
+  <script src="/live-content.js" defer></script>
 </body>
 </html>

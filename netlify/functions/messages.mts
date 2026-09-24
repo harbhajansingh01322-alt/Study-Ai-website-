@@ -19,7 +19,7 @@ export default async (req: Request, context: Context) => {
   }
 
   // Reading, marking read and deleting messages is admin-only.
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
 
   if (req.method === "GET") {
