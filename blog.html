@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="/live-content.css">
 </head>
 <body>
   <nav class="navbar">
@@ -36,14 +37,14 @@
 
   <section class="section" style="padding-top:1rem;">
     <div class="container">
-      <div class="flex gap-2 mb-3" style="flex-wrap:wrap;">
+      <div class="flex gap-2 mb-3" style="flex-wrap:wrap;" id="blog-filters">
         <button class="btn btn-primary btn-sm">All</button>
         <button class="btn btn-secondary btn-sm">Exam Tips</button>
         <button class="btn btn-secondary btn-sm">Current Affairs</button>
         <button class="btn btn-secondary btn-sm">Scholarships</button>
         <button class="btn btn-secondary btn-sm">Notifications</button>
       </div>
-      <div class="courses-grid">
+      <div class="courses-grid" id="blog-grid">
         <article class="course-card">
           <div class="course-thumb" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);"><i class="fas fa-lightbulb"></i></div>
           <div class="course-body">
@@ -120,5 +121,6 @@
   <script src="../js/db.js"></script>
   <script src="../js/firebase-config.js"></script>
   <script src="../js/main.js"></script>
+  <script src="/live-content.js" defer></script>
 </body>
 </html>

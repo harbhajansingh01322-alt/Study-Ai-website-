@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Admin Panel · StudyAI</title>
+  <link rel="stylesheet" href="admin.css">
+  <script src="admin.js" defer></script>
+</head>
+<body>
+  <main id="auth-screen" class="auth-screen">
+    <div class="auth-intro">
+      <a class="auth-brand" href="index.html"><span class="brand-mark">✦</span> Study<span>AI</span></a>
+      <div class="auth-intro-copy">
+        <span class="eyebrow light">THE CONTENT STUDIO</span>
+        <h1>Everything you need to run your learning space.</h1>
+        <p>Organize courses, publish resources, and keep your community moving from one place.</p>
+      </div>
+      <p class="auth-intro-foot">A focused workspace for the people behind StudyAI.</p>
+      <div class="auth-orbit orbit-one"></div><div class="auth-orbit orbit-two"></div>
+    </div>
+    <div class="auth-panel">
+      <div class="auth-card">
+        <div class="auth-icon">✦</div>
+        <span class="eyebrow">STUDYAI ADMIN</span>
+        <h2 id="auth-title">Welcome back</h2>
+        <p id="auth-description" class="muted">Sign in to manage your workspace.</p>
+        <div id="auth-notice" class="notice">Your changes are saved on Netlify and published content appears on the website immediately.</div>
+        <form id="auth-form">
+          <label for="auth-password">Admin password</label>
+          <input id="auth-password" name="password" type="password" autocomplete="current-password" minlength="12" required placeholder="Enter your password">
+          <p id="auth-error" class="form-error" role="alert" aria-live="polite"></p>
+          <button id="auth-submit" class="button primary auth-submit" type="submit">Sign in <span aria-hidden="true">→</span></button>
+        </form>
+        <p id="auth-hint" class="auth-hint">Use the admin password configured for this Netlify site.</p>
+      </div>
+    </div>
+  </main>
+
+  <div id="admin-app" class="app" hidden>
+    <div id="sidebar-scrim" class="sidebar-scrim" hidden></div>
+    <aside id="sidebar" class="sidebar" aria-label="Admin navigation">
+      <a class="sidebar-brand" href="index.html"><span class="brand-mark">✦</span><span>Study<span class="brand-ai">AI</span><small>ADMIN WORKSPACE</small></span></a>
+      <div class="workspace-switch"><span class="workspace-avatar">S</span><span><strong id="workspace-name">StudyAI Academy</strong><small>Content workspace</small></span><span class="switch-chevron">⌄</span></div>
+      <nav id="side-nav" class="side-nav">
+        <p class="nav-label">OVERVIEW</p>
+        <button type="button" data-section="dashboard" class="nav-item active"><span class="nav-icon">▦</span> Dashboard</button>
+        <p class="nav-label">CONTENT</p>
+        <button type="button" data-section="categories" class="nav-item"><span class="nav-icon">▧</span> Categories</button>
+        <button type="button" data-section="courses" class="nav-item"><span class="nav-icon">▤</span> Courses</button>
+        <button type="button" data-section="studyMaterials" class="nav-item"><span class="nav-icon">▥</span> Study Material</button>
+        <button type="button" data-section="pdfs" class="nav-item"><span class="nav-icon">▣</span> PDF Library</button>
+        <button type="button" data-section="videos" class="nav-item"><span class="nav-icon">▷</span> Videos</button>
+        <button type="button" data-section="quizzes" class="nav-item"><span class="nav-icon">◇</span> Quizzes</button>
+        <button type="button" data-section="blogs" class="nav-item"><span class="nav-icon">✎</span> Blog</button>
+        <p class="nav-label">WORKSPACE</p>
+        <button type="button" data-section="users" class="nav-item"><span class="nav-icon">♙</span> Users</button>
+        <button type="button" data-section="settings" class="nav-item"><span class="nav-icon">⚙</span> Settings</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="demo-pill"><span class="dot"></span> Netlify content</div>
+        <a href="index.html" class="site-link">↗ &nbsp; View website</a>
+        <button id="logout-button" type="button" class="site-link logout-link">↪ &nbsp; Sign out</button>
+      </div>
+    </aside>
+    <div class="main-shell">
+      <header class="topbar">
+        <div class="topbar-left"><button id="menu-button" type="button" class="icon-button menu-button" aria-label="Open menu" aria-expanded="false">☰</button><span id="breadcrumb">Overview <span>/</span> Dashboard</span></div>
+        <div class="topbar-right"><span class="topbar-demo"><span class="dot"></span> <span id="workspace-state">Live workspace</span></span><span class="topbar-divider"></span><span class="admin-avatar" title="Admin">SA</span><span class="topbar-name">Admin</span></div>
+      </header>
+      <main id="main-content" class="main-content" tabindex="-1"></main>
+    </div>
+  </div>
+
+  <dialog id="record-dialog" class="record-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-header"><div><span class="eyebrow">CONTENT WORKSPACE</span><h2 id="dialog-title">Add item</h2></div><button id="dialog-close" class="icon-button" type="button" aria-label="Close dialog">×</button></div>
+    <form id="record-form"><div id="dialog-fields" class="dialog-fields"></div><p id="dialog-error" class="form-error" role="alert"></p><div class="dialog-actions"><button id="dialog-cancel" class="button secondary" type="button">Cancel</button><button class="button primary" type="submit">Save changes</button></div></form>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

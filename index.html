@@ -15,6 +15,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="/live-content.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
 </head>
 <body>
@@ -179,7 +180,7 @@
         <h2 data-i18n="section.categories">Explore Categories</h2>
         <p>From school to competitive exams — everything in one place</p>
       </div>
-      <div class="categories-grid">
+      <div class="categories-grid" id="live-categories-grid">
         <a href="pages/study-material.html?cat=class6-12" class="category-card fade-in stagger-1">
           <div class="category-icon"><i class="fas fa-book-open"></i></div>
           <span class="category-name">Class 6-12</span>
@@ -239,7 +240,7 @@
         <h2 data-i18n="section.trending">Trending Courses</h2>
         <p>Most popular study paths right now</p>
       </div>
-      <div class="courses-grid">
+      <div class="courses-grid" id="featured-courses-grid">
         <div class="course-card">
           <div class="course-thumb" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">
             <i class="fas fa-calculator"></i>
@@ -546,5 +547,6 @@
   <script src="js/db.js"></script>
   <script src="js/firebase-config.js"></script>
   <script src="js/main.js"></script>
+  <script src="/live-content.js" defer></script>
 </body>
 </html>
