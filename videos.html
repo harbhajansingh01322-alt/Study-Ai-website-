@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Lectures - StudyAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="logo">
+        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        <span>Study<span class="gradient-text">AI</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="videos.html" class="nav-link active">Videos</a>
+        <a href="study-material.html" class="nav-link">Study Material</a>
+        <a href="quiz.html" class="nav-link">Quizzes</a>
+      </div>
+      <div class="nav-actions">
+        <button class="icon-btn" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button class="btn btn-primary btn-sm" id="login-btn" onclick="openModal('auth-modal')">Login</button>
+        <button class="mobile-menu-btn" onclick="toggleMobileNav()"><i class="fas fa-bars"></i></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">🎥 Video Lectures</h1>
+      <p class="page-subtitle">Embedded YouTube lectures with playlist support</p>
+    </div>
+  </div>
+
+  <section class="section" style="padding-top:1rem;">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:2rem;" class="video-layout">
+        <div>
+          <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+            <div style="position:relative;padding-bottom:56.25%;height:0;">
+              <iframe id="main-video" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"
+                allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div style="padding:1.25rem;">
+              <h3 id="video-title">Introduction to SSC CGL Preparation</h3>
+              <p style="color:var(--text-muted);font-size:0.9rem;margin-top:0.5rem;" id="video-desc">Complete beginner guide to cracking SSC CGL</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 class="mb-3">📋 Playlist</h3>
+          <div id="playlist" style="display:flex;flex-direction:column;gap:0.75rem;"></div>
+        </div>
+      </div>
+
+      <h2 class="mt-4 mb-3">More Playlists</h2>
+      <div class="courses-grid" id="playlists-grid"></div>
+    </div>
+  </section>
+
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal">
+      <div class="modal-header"><h3>Login</h3><button class="modal-close" onclick="closeModal('auth-modal')"><i class="fas fa-times"></i></button></div>
+      <div class="modal-body">
+        <form id="login-form">
+          <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-input" required></div>
+          <div class="form-group"><label>Password</label><input type="password" id="login-password" class="form-input" required></div>
+          <button type="submit" class="btn btn-primary w-full">Login</button>
+        </form>
+        <form id="signup-form" class="hidden"></form>
+        <button class="btn btn-secondary w-full mt-2" onclick="StudyAI.AuthManager.googleLogin()"><i class="fab fa-google"></i> Google</button>
+      </div>
+    </div>
+  </div>
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="../js/db.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    const videos = [
+      { id: 'dQw4w9WgXcQ', title: 'SSC CGL Introduction', desc: 'Complete beginner guide', duration: '15:30' },
+      { id: 'jNQXAC9IVRw', title: 'Percentage Tricks', desc: 'Quick calculation methods', duration: '12:45' },
+      { id: '9bZkp7q19f0', title: 'Indian Polity Basics', desc: 'Constitution fundamentals', duration: '22:10' },
+      { id: 'kJQP7kiw5Fk', title: 'English Grammar Tips', desc: 'Common error spotting', duration: '18:00' },
+      { id: 'RgKAFK5djSk', title: 'Reasoning Shortcuts', desc: 'Coding-decoding mastery', duration: '14:20' }
+    ];
+
+    const playlists = [
+      { title: 'SSC CGL Complete Series', count: 45, color: '#6366f1' },
+      { title: 'Banking English', count: 28, color: '#10b981' },
+      { title: 'UPSC Polity', count: 35, color: '#f59e0b' },
+      { title: 'Railway NTPC Maths', count: 30, color: '#ec4899' }
+    ];
+
+    function loadVideo(v) {
+      document.getElementById('main-video').src = `https://www.youtube.com/embed/${v.id}`;
+      document.getElementById('video-title').textContent = v.title;
+      document.getElementById('video-desc').textContent = v.desc;
+    }
+
+    document.getElementById('playlist').innerHTML = videos.map((v, i) => `
+      <div class="card" style="padding:1rem;cursor:pointer;display:flex;gap:1rem;align-items:center;" onclick='loadVideo(${JSON.stringify(v)})'>
+        <div style="width:40px;height:40px;background:var(--accent-gradient);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;flex-shrink:0;">${i+1}</div>
+        <div>
+          <div style="font-weight:600;font-size:0.9rem;">${v.title}</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);">${v.duration}</div>
+        </div>
+      </div>
+    `).join('');
+
+    document.getElementById('playlists-grid').innerHTML = playlists.map(p => `
+      <div class="course-card">
+        <div class="course-thumb" style="background:linear-gradient(135deg,${p.color},${p.color}aa);">
+          <i class="fas fa-play-circle" style="font-size:3rem;"></i>
+        </div>
+        <div class="course-body">
+          <h3 class="course-title">${p.title}</h3>
+          <div class="course-meta"><span>${p.count} Videos</span></div>
+          <div class="course-footer">
+            <button class="btn btn-primary btn-sm" onclick="StudyAI.Toast.show('Playlist loaded','info')">Watch</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  </script>
+  <style>@media(max-width:768px){.video-layout{grid-template-columns:1fr!important;}}</style>
+</body>
+</html>

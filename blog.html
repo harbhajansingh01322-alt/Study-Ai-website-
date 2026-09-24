@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog - StudyAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="logo">
+        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        <span>Study<span class="gradient-text">AI</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="blog.html" class="nav-link active">Blog</a>
+        <a href="study-material.html" class="nav-link">Study Material</a>
+      </div>
+      <div class="nav-actions">
+        <button class="icon-btn" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button class="btn btn-primary btn-sm" id="login-btn" onclick="openModal('auth-modal')">Login</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">📰 Blog & Updates</h1>
+      <p class="page-subtitle">Exam tips, current affairs, scholarships & notifications</p>
+    </div>
+  </div>
+
+  <section class="section" style="padding-top:1rem;">
+    <div class="container">
+      <div class="flex gap-2 mb-3" style="flex-wrap:wrap;">
+        <button class="btn btn-primary btn-sm">All</button>
+        <button class="btn btn-secondary btn-sm">Exam Tips</button>
+        <button class="btn btn-secondary btn-sm">Current Affairs</button>
+        <button class="btn btn-secondary btn-sm">Scholarships</button>
+        <button class="btn btn-secondary btn-sm">Notifications</button>
+      </div>
+      <div class="courses-grid">
+        <article class="course-card">
+          <div class="course-thumb" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);"><i class="fas fa-lightbulb"></i></div>
+          <div class="course-body">
+            <div style="font-size:0.8rem;color:var(--accent-primary);font-weight:600;margin-bottom:0.35rem;">EXAM TIPS</div>
+            <h3 class="course-title">How to Crack SSC CGL in First Attempt</h3>
+            <p style="font-size:0.9rem;color:var(--text-secondary);margin:0.5rem 0;">A complete strategy guide covering syllabus, time management and resources...</p>
+            <div class="course-meta"><span>Sep 20, 2025</span><span>8 min read</span></div>
+          </div>
+        </article>
+        <article class="course-card">
+          <div class="course-thumb" style="background:linear-gradient(135deg,#10b981,#059669);"><i class="fas fa-newspaper"></i></div>
+          <div class="course-body">
+            <div style="font-size:0.8rem;color:var(--success);font-weight:600;margin-bottom:0.35rem;">CURRENT AFFAIRS</div>
+            <h3 class="course-title">Weekly Current Affairs - September Week 3</h3>
+            <p style="font-size:0.9rem;color:var(--text-secondary);margin:0.5rem 0;">Key national and international events for competitive exam preparation...</p>
+            <div class="course-meta"><span>Sep 22, 2025</span><span>12 min read</span></div>
+          </div>
+        </article>
+        <article class="course-card">
+          <div class="course-thumb" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><i class="fas fa-graduation-cap"></i></div>
+          <div class="course-body">
+            <div style="font-size:0.8rem;color:var(--warning);font-weight:600;margin-bottom:0.35rem;">SCHOLARSHIP</div>
+            <h3 class="course-title">National Scholarship Portal 2025 - How to Apply</h3>
+            <p style="font-size:0.9rem;color:var(--text-secondary);margin:0.5rem 0;">Step-by-step guide to apply for various central and state scholarships...</p>
+            <div class="course-meta"><span>Sep 18, 2025</span><span>6 min read</span></div>
+          </div>
+        </article>
+        <article class="course-card">
+          <div class="course-thumb" style="background:linear-gradient(135deg,#ef4444,#dc2626);"><i class="fas fa-bell"></i></div>
+          <div class="course-body">
+            <div style="font-size:0.8rem;color:var(--danger);font-weight:600;margin-bottom:0.35rem;">NOTIFICATION</div>
+            <h3 class="course-title">SSC CGL 2025 Notification Released</h3>
+            <p style="font-size:0.9rem;color:var(--text-secondary);margin:0.5rem 0;">Important dates, eligibility, vacancy details and application process...</p>
+            <div class="course-meta"><span>Sep 15, 2025</span><span>5 min read</span></div>
+          </div>
+        </article>
+        <article class="course-card">
+          <div class="course-thumb" style="background:linear-gradient(135deg,#3b82f6,#2563eb);"><i class="fas fa-brain"></i></div>
+          <div class="course-body">
+            <div style="font-size:0.8rem;color:var(--info);font-weight:600;margin-bottom:0.35rem;">EXAM TIPS</div>
+            <h3 class="course-title">Best Reasoning Books for Banking Exams</h3>
+            <p style="font-size:0.9rem;color:var(--text-secondary);margin:0.5rem 0;">Recommended books and online resources for IBPS, SBI and other banking exams...</p>
+            <div class="course-meta"><span>Sep 12, 2025</span><span>7 min read</span></div>
+          </div>
+        </article>
+        <article class="course-card">
+          <div class="course-thumb" style="background:linear-gradient(135deg,#ec4899,#db2777);"><i class="fas fa-train"></i></div>
+          <div class="course-body">
+            <div style="font-size:0.8rem;color:#ec4899;font-weight:600;margin-bottom:0.35rem;">NOTIFICATION</div>
+            <h3 class="course-title">RRB NTPC Application Deadline Extended</h3>
+            <p style="font-size:0.9rem;color:var(--text-secondary);margin:0.5rem 0;">New last date for application and important instructions for candidates...</p>
+            <div class="course-meta"><span>Sep 10, 2025</span><span>3 min read</span></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal">
+      <div class="modal-header"><h3>Login</h3><button class="modal-close" onclick="closeModal('auth-modal')"><i class="fas fa-times"></i></button></div>
+      <div class="modal-body">
+        <form id="login-form">
+          <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-input" required></div>
+          <div class="form-group"><label>Password</label><input type="password" id="login-password" class="form-input" required></div>
+          <button type="submit" class="btn btn-primary w-full">Login</button>
+        </form>
+        <form id="signup-form" class="hidden"></form>
+        <button class="btn btn-secondary w-full mt-2" onclick="StudyAI.AuthManager.googleLogin()"><i class="fab fa-google"></i> Google</button>
+      </div>
+    </div>
+  </div>
+  <div id="toast-container" class="toast-container"></div>
+  <script src="../js/db.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

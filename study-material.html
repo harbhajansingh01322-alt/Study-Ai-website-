@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="StudyAI Study Material - Class 6-12, B.Com, SSC, MTS, CHSL, CGL, UPSC, Banking, Railway, Haryana CET, State Exams.">
+  <title>Study Material - StudyAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="logo">
+        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        <span>Study<span class="gradient-text">AI</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="study-material.html" class="nav-link active">Study Material</a>
+        <a href="pdf-library.html" class="nav-link">PDF Library</a>
+        <a href="quiz.html" class="nav-link">Quizzes</a>
+        <a href="ai-assistant.html" class="nav-link">AI Assistant</a>
+        <a href="videos.html" class="nav-link">Videos</a>
+      </div>
+      <div class="nav-actions">
+        <button class="icon-btn" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button class="btn btn-primary btn-sm" id="login-btn" onclick="openModal('auth-modal')">Login</button>
+        <div class="user-menu hidden" id="user-menu"><button class="icon-btn"><i class="fas fa-user-circle"></i></button></div>
+        <button class="mobile-menu-btn" onclick="toggleMobileNav()"><i class="fas fa-bars"></i></button>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-nav" id="mobile-nav">
+    <a href="../index.html" class="nav-link">Home</a>
+    <a href="study-material.html" class="nav-link">Study Material</a>
+    <a href="pdf-library.html" class="nav-link">PDF Library</a>
+    <a href="quiz.html" class="nav-link">Quizzes</a>
+  </div>
+
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">📚 Study Material</h1>
+      <p class="page-subtitle">Comprehensive resources for every exam and class</p>
+      <div class="search-container mt-3" style="max-width:500px;">
+        <div class="search-bar">
+          <i class="fas fa-search" style="color:var(--text-muted);"></i>
+          <input type="text" id="material-search" placeholder="Search subjects, topics..." oninput="filterMaterials(this.value)">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section" style="padding-top:1rem;">
+    <div class="container">
+      <!-- Category Filters -->
+      <div class="flex gap-2 mb-3" style="flex-wrap:wrap;" id="cat-filters">
+        <button class="btn btn-primary btn-sm cat-btn active" data-cat="all">All</button>
+        <button class="btn btn-secondary btn-sm cat-btn" data-cat="class6-12">Class 6-12</button>
+        <button class="btn btn-secondary btn-sm cat-btn" data-cat="bcom">B.Com</button>
+        <button class="btn btn-secondary btn-sm cat-btn" data-cat="ssc">SSC</button>
+        <button class="btn btn-secondary btn-sm cat-btn" data-cat="mts">MTS</button>
+        <button class="btn btn-secondary btn-sm cat-btn" data-cat="chsl">CHSL</button>
+        <button class="btn btn-secondary btn-sm cat-btn" data-cat="cgl">CGL</button>
+        <button class="btn btn-secondary btn-sm cat-btn" data-cat="upsc">UPSC</button>
+        <button class="btn btn-secondary btn-sm cat-btn" data-cat="banking">Banking</button>
+        <button class="btn btn-secondary btn-sm cat-btn" data-cat="railway">Railway</button>
+        <button class="btn btn-secondary btn-sm cat-btn" data-cat="haryana">Haryana CET</button>
+        <button class="btn btn-secondary btn-sm cat-btn" data-cat="state">State Exams</button>
+      </div>
+
+      <div class="courses-grid" id="materials-grid">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal">
+      <div class="modal-header"><h3>Login</h3><button class="modal-close" onclick="closeModal('auth-modal')"><i class="fas fa-times"></i></button></div>
+      <div class="modal-body">
+        <form id="login-form">
+          <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-input" required></div>
+          <div class="form-group"><label>Password</label><input type="password" id="login-password" class="form-input" required></div>
+          <button type="submit" class="btn btn-primary w-full">Login</button>
+        </form>
+        <form id="signup-form" class="hidden">
+          <div class="form-group"><label>Name</label><input type="text" id="signup-name" class="form-input" required></div>
+          <div class="form-group"><label>Email</label><input type="email" id="signup-email" class="form-input" required></div>
+          <div class="form-group"><label>Password</label><input type="password" id="signup-password" class="form-input" required></div>
+          <button type="submit" class="btn btn-primary w-full">Sign Up</button>
+        </form>
+        <div class="divider">or</div>
+        <button class="btn btn-secondary w-full" onclick="StudyAI.AuthManager.googleLogin()"><i class="fab fa-google"></i> Google</button>
+      </div>
+    </div>
+  </div>
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="../js/db.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    const materials = [
+      { id: 1, title: 'Class 10 Science Complete', cat: 'class6-12', icon: 'fa-flask', lessons: 40, students: '8K', rating: 4.8, color: '#6366f1' },
+      { id: 2, title: 'Class 12 Mathematics', cat: 'class6-12', icon: 'fa-calculator', lessons: 55, students: '12K', rating: 4.9, color: '#8b5cf6' },
+      { id: 3, title: 'Class 9 Social Science', cat: 'class6-12', icon: 'fa-globe', lessons: 35, students: '6K', rating: 4.7, color: '#10b981' },
+      { id: 4, title: 'B.Com Accountancy', cat: 'bcom', icon: 'fa-book', lessons: 48, students: '5K', rating: 4.8, color: '#f59e0b' },
+      { id: 5, title: 'B.Com Business Studies', cat: 'bcom', icon: 'fa-briefcase', lessons: 30, students: '4K', rating: 4.6, color: '#ec4899' },
+      { id: 6, title: 'SSC General Awareness', cat: 'ssc', icon: 'fa-lightbulb', lessons: 50, students: '20K', rating: 4.9, color: '#3b82f6' },
+      { id: 7, title: 'SSC English Language', cat: 'ssc', icon: 'fa-language', lessons: 42, students: '18K', rating: 4.8, color: '#6366f1' },
+      { id: 8, title: 'MTS Complete Guide', cat: 'mts', icon: 'fa-clipboard-list', lessons: 25, students: '7K', rating: 4.7, color: '#10b981' },
+      { id: 9, title: 'CHSL Tier-1 Mastery', cat: 'chsl', icon: 'fa-file-alt', lessons: 38, students: '9K', rating: 4.8, color: '#f59e0b' },
+      { id: 10, title: 'CGL Quantitative Aptitude', cat: 'cgl', icon: 'fa-calculator', lessons: 60, students: '25K', rating: 4.9, color: '#8b5cf6' },
+      { id: 11, title: 'CGL Reasoning Complete', cat: 'cgl', icon: 'fa-brain', lessons: 45, students: '22K', rating: 4.9, color: '#ec4899' },
+      { id: 12, title: 'UPSC Prelims GS Paper 1', cat: 'upsc', icon: 'fa-university', lessons: 80, students: '15K', rating: 4.9, color: '#3b82f6' },
+      { id: 13, title: 'UPSC Polity & Governance', cat: 'upsc', icon: 'fa-landmark', lessons: 50, students: '14K', rating: 4.8, color: '#6366f1' },
+      { id: 14, title: 'IBPS PO Banking Awareness', cat: 'banking', icon: 'fa-university', lessons: 35, students: '11K', rating: 4.8, color: '#10b981' },
+      { id: 15, title: 'SBI Clerk Complete', cat: 'banking', icon: 'fa-piggy-bank', lessons: 40, students: '10K', rating: 4.7, color: '#f59e0b' },
+      { id: 16, title: 'RRB NTPC Guide', cat: 'railway', icon: 'fa-train', lessons: 45, students: '13K', rating: 4.8, color: '#ec4899' },
+      { id: 17, title: 'Railway Group D', cat: 'railway', icon: 'fa-subway', lessons: 30, students: '8K', rating: 4.6, color: '#3b82f6' },
+      { id: 18, title: 'Haryana CET Complete', cat: 'haryana', icon: 'fa-map-marker-alt', lessons: 35, students: '6K', rating: 4.7, color: '#6366f1' },
+      { id: 19, title: 'State PSC General Studies', cat: 'state', icon: 'fa-flag', lessons: 55, students: '9K', rating: 4.8, color: '#8b5cf6' },
+      { id: 20, title: 'Current Affairs Monthly', cat: 'ssc', icon: 'fa-newspaper', lessons: 12, students: '30K', rating: 4.9, color: '#10b981' }
+    ];
+
+    function renderMaterials(list) {
+      const grid = document.getElementById('materials-grid');
+      grid.innerHTML = list.map(m => `
+        <div class="course-card" data-cat="${m.cat}">
+          <div class="course-thumb" style="background:linear-gradient(135deg,${m.color},${m.color}cc);">
+            <i class="fas ${m.icon}"></i>
+          </div>
+          <div class="course-body">
+            <h3 class="course-title">${m.title}</h3>
+            <div class="course-meta">
+              <span><i class="fas fa-book"></i> ${m.lessons} Lessons</span>
+              <span><i class="fas fa-users"></i> ${m.students}</span>
+            </div>
+            <div class="course-footer">
+              <div class="course-rating"><i class="fas fa-star"></i> ${m.rating}</div>
+              <a href="pdf-library.html" class="btn btn-primary btn-sm">Open</a>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterMaterials(query) {
+      const q = query.toLowerCase();
+      const activeCat = document.querySelector('.cat-btn.active')?.dataset.cat || 'all';
+      let filtered = materials;
+      if (activeCat !== 'all') filtered = filtered.filter(m => m.cat === activeCat);
+      if (q) filtered = filtered.filter(m => m.title.toLowerCase().includes(q));
+      renderMaterials(filtered);
+    }
+
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.cat-btn').forEach(b => {
+          b.classList.remove('active', 'btn-primary');
+          b.classList.add('btn-secondary');
+        });
+        btn.classList.add('active', 'btn-primary');
+        btn.classList.remove('btn-secondary');
+        filterMaterials(document.getElementById('material-search').value);
+      });
+    });
+
+    // URL param support
+    const params = new URLSearchParams(location.search);
+    const cat = params.get('cat');
+    if (cat) {
+      const btn = document.querySelector(`[data-cat="${cat}"]`);
+      if (btn) btn.click();
+    } else {
+      renderMaterials(materials);
+    }
+  </script>
+</body>
+</html>

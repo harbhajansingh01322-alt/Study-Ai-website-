@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="StudyAI AI Study Assistant - Real-time help with homework, notes, doubts and explanations powered by Gemini.">
+  <title>AI Study Assistant - StudyAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="logo">
+        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        <span>Study<span class="gradient-text">AI</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="study-material.html" class="nav-link">Study Material</a>
+        <a href="pdf-library.html" class="nav-link">PDF Library</a>
+        <a href="quiz.html" class="nav-link">Quizzes</a>
+        <a href="ai-assistant.html" class="nav-link active">AI Assistant</a>
+        <a href="videos.html" class="nav-link">Videos</a>
+        <a href="planner.html" class="nav-link">Planner</a>
+      </div>
+      <div class="nav-actions">
+        <button class="icon-btn" id="theme-toggle" title="Theme"><i class="fas fa-moon"></i></button>
+        <button class="btn btn-primary btn-sm" id="login-btn" onclick="openModal('auth-modal')">Login</button>
+        <div class="user-menu hidden" id="user-menu">
+          <span id="user-name" style="font-weight:600;margin-right:0.5rem;"></span>
+          <button class="icon-btn" onclick="AuthManager.logout()"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+        <button class="mobile-menu-btn" onclick="toggleMobileNav()"><i class="fas fa-bars"></i></button>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-nav" id="mobile-nav">
+    <a href="../index.html" class="nav-link">Home</a>
+    <a href="ai-assistant.html" class="nav-link">AI Assistant</a>
+    <a href="quiz.html" class="nav-link">Quizzes</a>
+    <a href="dashboard.html" class="nav-link">Dashboard</a>
+  </div>
+
+  <div class="chat-layout">
+    <aside class="chat-sidebar">
+      <button class="btn btn-primary w-full mb-3" onclick="AIChat.newChat()"><i class="fas fa-plus"></i> New Chat</button>
+      <h4 style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.75rem;text-transform:uppercase;">Modes</h4>
+      <button class="sidebar-link active" data-mode="chat" onclick="AIChat.setMode('chat',this)"><i class="fas fa-comments"></i> AI Chat</button>
+      <button class="sidebar-link" data-mode="homework" onclick="AIChat.setMode('homework',this)"><i class="fas fa-pencil-alt"></i> Homework Solver</button>
+      <button class="sidebar-link" data-mode="summarize" onclick="AIChat.setMode('summarize',this)"><i class="fas fa-file-alt"></i> Summarizer</button>
+      <button class="sidebar-link" data-mode="notes" onclick="AIChat.setMode('notes',this)"><i class="fas fa-sticky-note"></i> Notes Generator</button>
+      <button class="sidebar-link" data-mode="doubt" onclick="AIChat.setMode('doubt',this)"><i class="fas fa-question-circle"></i> Doubt Solver</button>
+      <button class="sidebar-link" data-mode="explain" onclick="AIChat.setMode('explain',this)"><i class="fas fa-chalkboard-teacher"></i> Explain Like Teacher</button>
+
+      <h4 style="font-size:0.85rem;color:var(--text-muted);margin:1.5rem 0 0.75rem;text-transform:uppercase;">API Key</h4>
+      <div style="padding:0 0.25rem;">
+        <input type="password" id="gemini-key" class="form-input" placeholder="Gemini API key" style="font-size:0.8rem;padding:0.5rem;">
+        <button class="btn btn-secondary btn-sm w-full mt-2" onclick="AIChat.saveKey()"><i class="fas fa-save"></i> Save Key</button>
+        <p style="font-size:0.7rem;color:var(--text-muted);margin-top:0.5rem;">Get free key: aistudio.google.com/apikey</p>
+      </div>
+    </aside>
+
+    <main class="chat-main">
+      <div class="chat-messages" id="chat-messages">
+        <div class="message">
+          <div class="message-avatar"><i class="fas fa-robot"></i></div>
+          <div class="message-content">
+            <strong>StudyAI Assistant</strong><br><br>
+            Main aapka study partner hoon. Poochho kuch bhi — homework, notes, doubts, explanations.<br><br>
+            <strong>Modes:</strong> Chat · Homework · Summarizer · Notes · Doubt · Explain like Teacher<br><br>
+            Gemini API key save karke real AI responses milenge. Bina key ke bhi exam topics pe detailed answers milte hain.
+          </div>
+        </div>
+      </div>
+      <div class="chat-input-area">
+        <div class="chat-input-wrapper">
+          <textarea class="chat-input" id="chat-input" placeholder="Apna sawal likho... (e.g. Explain photosynthesis for Class 10)" rows="1"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();AIChat.send();}"></textarea>
+          <button class="btn btn-primary btn-icon" onclick="AIChat.send()" title="Send"><i class="fas fa-paper-plane"></i></button>
+        </div>
+        <p style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;">StudyAI educational help ke liye hai. Important facts double-check karein.</p>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal">
+      <div class="modal-header"><h3 data-i18n="auth.welcome">Welcome to StudyAI</h3><button class="modal-close" onclick="closeModal('auth-modal')"><i class="fas fa-times"></i></button></div>
+      <div class="modal-body">
+        <div class="flex gap-2 mb-3" style="background:var(--bg-tertiary);padding:0.25rem;border-radius:10px;">
+          <button class="btn btn-sm active w-full" data-auth-tab="login" style="background:var(--accent-primary);color:white;">Login</button>
+          <button class="btn btn-sm w-full" data-auth-tab="signup">Sign Up</button>
+        </div>
+        <form id="login-form">
+          <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-input" required></div>
+          <div class="form-group"><label>Password</label><input type="password" id="login-password" class="form-input" required></div>
+          <button type="submit" class="btn btn-primary w-full">Login</button>
+        </form>
+        <form id="signup-form" class="hidden">
+          <div class="form-group"><label>Name</label><input type="text" id="signup-name" class="form-input" required></div>
+          <div class="form-group"><label>Email</label><input type="email" id="signup-email" class="form-input" required></div>
+          <div class="form-group"><label>Password</label><input type="password" id="signup-password" class="form-input" required></div>
+          <button type="submit" class="btn btn-primary w-full">Sign Up</button>
+        </form>
+        <div class="divider">or</div>
+        <button class="btn btn-secondary w-full" onclick="AuthManager.googleLogin()"><i class="fab fa-google"></i> Google</button>
+      </div>
+    </div>
+  </div>
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="../js/db.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    const AIChat = {
+      mode: 'chat',
+      history: [],
+      sending: false,
+
+      init() {
+        const key = DB.getSettings().geminiKey || window.GEMINI_DEFAULT_KEY || '';
+        const input = document.getElementById('gemini-key');
+        if (input && key) input.value = key;
+      },
+
+      saveKey() {
+        const key = (document.getElementById('gemini-key').value || '').trim();
+        DB.saveSettings({ geminiKey: key });
+        Toast.show(key ? 'Gemini API key saved. Real AI is active.' : 'API key cleared.', key ? 'success' : 'info');
+      },
+
+      setMode(mode, el) {
+        this.mode = mode;
+        document.querySelectorAll('.chat-sidebar .sidebar-link[data-mode]').forEach(l => l.classList.remove('active'));
+        el?.classList.add('active');
+        const placeholders = {
+          chat: 'Apna sawal likho...',
+          homework: 'Homework question paste karo...',
+          summarize: 'Text paste karo jo summarize karna hai...',
+          notes: 'Topic likho notes generate karne ke liye...',
+          doubt: 'Apna doubt clearly likho...',
+          explain: 'Kaunsa topic teacher ki tarah samjhaun?'
+        };
+        document.getElementById('chat-input').placeholder = placeholders[mode] || placeholders.chat;
+      },
+
+      newChat() {
+        this.history = [];
+        document.getElementById('chat-messages').innerHTML = `
+          <div class="message">
+            <div class="message-avatar"><i class="fas fa-robot"></i></div>
+            <div class="message-content">Nayi conversation shuru. Aaj kya padhna hai?</div>
+          </div>`;
+      },
+
+      async send() {
+        if (this.sending) return;
+        const input = document.getElementById('chat-input');
+        const text = (input.value || '').trim();
+        if (!text) return;
+        input.value = '';
+        this.sending = true;
+        this.addMessage(text, 'user');
+        this.addMessage('<i class="fas fa-spinner fa-spin"></i> Soch raha hoon...', 'ai', true);
+
+        let reply;
+        const key = (DB.getSettings().geminiKey || window.GEMINI_DEFAULT_KEY || '').trim();
+        if (key) {
+          try {
+            reply = await this.callGemini(key, text);
+          } catch (e) {
+            reply = this.localReply(text) + '\n\n_(API error: ' + e.message + ' — local answer used)_';
+          }
+        } else {
+          reply = this.localReply(text);
+        }
+
+        const msgs = document.getElementById('chat-messages');
+        if (msgs.lastChild) msgs.removeChild(msgs.lastChild);
+        this.addMessage(reply, 'ai');
+        this.history.push({ role: 'user', content: text }, { role: 'model', content: reply });
+        this.sending = false;
+      },
+
+      addMessage(content, type, isHtml) {
+        const msgs = document.getElementById('chat-messages');
+        const div = document.createElement('div');
+        div.className = 'message' + (type === 'user' ? ' user' : '');
+        const body = isHtml ? content : this.format(content);
+        div.innerHTML = '<div class="message-avatar">' + (type === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>') +
+          '</div><div class="message-content">' + body + '</div>';
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+      },
+
+      format(str) {
+        return String(str)
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\n/g, '<br>');
+      },
+
+      systemPrompt() {
+        const modes = {
+          chat: 'You are StudyAI, a friendly expert tutor for Indian students (Class 6-12, SSC, Banking, UPSC, Railway). Answer clearly in the user language (Hindi or English). Use examples.',
+          homework: 'Solve the homework step by step. Show working. End with the final answer clearly.',
+          summarize: 'Summarize into clear bullet points for exam revision. Keep key facts.',
+          notes: 'Generate structured study notes: headings, bullet points, definitions, examples, and a short summary.',
+          doubt: 'Resolve the student doubt with simple language, one analogy, and one example.',
+          explain: 'Explain like a patient school teacher: simple words, everyday analogy, then exam-relevant points.'
+        };
+        return modes[this.mode] || modes.chat;
+      },
+
+      async callGemini(apiKey, userText) {
+        const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + encodeURIComponent(apiKey);
+        const contents = [];
+        this.history.slice(-8).forEach(h => {
+          contents.push({ role: h.role === 'user' ? 'user' : 'model', parts: [{ text: h.content }] });
+        });
+        contents.push({ role: 'user', parts: [{ text: this.systemPrompt() + '\n\nStudent: ' + userText }] });
+
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents })
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error?.message || ('HTTP ' + res.status));
+        }
+        const data = await res.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!text) throw new Error('Empty response from Gemini');
+        return text.trim();
+      },
+
+      localReply(text) {
+        const t = text.toLowerCase();
+        if (/photo|photosynthesis|प्रकाश/.test(t)) {
+          return '**Photosynthesis (Class 10)**\n\nPlants food banati hain sunlight se.\n\n**Ingredients:** Sunlight, Water (roots), CO₂ (air)\n**Kitchen:** Leaf — chlorophyll = chef\n**Product:** Glucose + Oxygen\n\n**Equation:**\n6CO₂ + 6H₂O + Light → C₆H₁₂O₆ + 6O₂\n\nExam tip: Light reaction thylakoid mein, dark reaction stroma mein hoti hai.';
+        }
+        if (/newton|motion|नियम/.test(t)) {
+          return '**Newton\'s Laws of Motion**\n\n1. **Inertia:** Object rest/motion mein rehta hai jab tak force na lage.\n2. **F = ma:** Force = mass × acceleration.\n3. **Action-Reaction:** Har action ka equal opposite reaction.\n\nExample: Jump karte waqt aap ground ko push karte ho, ground aapko upar push karta hai.';
+        }
+        if (/constitution|polity|article|संविधान|अधिनियम/.test(t)) {
+          return '**Indian Constitution — Quick Notes**\n\n- Adopted: 26 Nov 1949 | Enforced: 26 Jan 1950\n- Drafting Committee Chairman: Dr. B.R. Ambedkar\n- Fundamental Rights: Articles 12–35 (6 rights)\n- DPSPs: Articles 36–51 (from Ireland)\n- Fundamental Duties: Article 51A\n- Article 370 (abrogated): related to J&K\n\nPreamble: Sovereign, Socialist, Secular, Democratic, Republic.';
+        }
+        if (/percent|percentage|प्रतिशत/.test(t)) {
+          return '**Percentage Tricks**\n\n- x% of y = (x/100)×y\n- A se B kitna % zyada = ((B−A)/A)×100\n- Successive: a% then b% → a+b+(ab/100)\n\nExample: 20% of 250 = 50. Two successive 10% = 21% total.';
+        }
+        if (/ssc|cgl|bank|upsc|railway|cet/.test(t)) {
+          return '**Exam Strategy**\n\n1. Syllabus clear karo (official notification).\n2. NCERT / standard books se base.\n3. Roz previous year + mock.\n4. Weak topics note karke revise.\n5. Time management: section-wise practice.\n\nSpecific subject batao (Maths / Reasoning / English / GA) — uspe detailed plan dunga.';
+        }
+        return 'Aapka sawal: **' + text.slice(0, 80) + (text.length > 80 ? '...' : '') + '**\n\nMain is topic pe help kar sakta hoon. Thoda specific banao:\n- Class / exam (10th, SSC, Banking…)\n- Exact concept jo confuse hai\n\n**Better answers ke liye:** sidebar mein free Gemini API key save karo (aistudio.google.com/apikey) — phir har sawal pe full AI response milega.\n\nAbhi bhi batao: kaunsa topic detail mein chahiye?';
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => AIChat.init());
+    window.AIChat = AIChat;
+  </script>
+</body>
+</html>

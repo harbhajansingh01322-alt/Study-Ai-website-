@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tools - StudyAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="logo">
+        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        <span>Study<span class="gradient-text">AI</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="tools.html" class="nav-link active">Tools</a>
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+      </div>
+      <div class="nav-actions">
+        <button class="icon-btn" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button class="btn btn-primary btn-sm" id="login-btn" onclick="openModal('auth-modal')">Login</button>
+        <button class="mobile-menu-btn" onclick="toggleMobileNav()"><i class="fas fa-bars"></i></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">🛠️ Student Tools</h1>
+      <p class="page-subtitle">Calculators, PDF tools, resume builder & more</p>
+    </div>
+  </div>
+
+  <section class="section" style="padding-top:1rem;">
+    <div class="container">
+      <div class="tools-grid">
+        <div class="tool-card" onclick="showTool('percentage')">
+          <div class="tool-icon"><i class="fas fa-percent"></i></div>
+          <h4>Percentage Calculator</h4>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:0.35rem;">Calculate % easily</p>
+        </div>
+        <div class="tool-card" onclick="showTool('age')">
+          <div class="tool-icon"><i class="fas fa-birthday-cake"></i></div>
+          <h4>Age Calculator</h4>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:0.35rem;">Exact age from DOB</p>
+        </div>
+        <div class="tool-card" onclick="showTool('cgpa')">
+          <div class="tool-icon"><i class="fas fa-graduation-cap"></i></div>
+          <h4>CGPA Calculator</h4>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:0.35rem;">Convert CGPA to %</p>
+        </div>
+        <div class="tool-card" onclick="showTool('resume')">
+          <div class="tool-icon"><i class="fas fa-file-alt"></i></div>
+          <h4>Resume Builder</h4>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:0.35rem;">Create professional resume</p>
+        </div>
+        <div class="tool-card" onclick="showTool('pdf')">
+          <div class="tool-icon"><i class="fas fa-file-pdf"></i></div>
+          <h4>PDF Tools</h4>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:0.35rem;">Merge, split, compress</p>
+        </div>
+        <div class="tool-card" onclick="StudyAI.Toast.show('Image to PDF: Upload images in production via Firebase Storage','info')">
+          <div class="tool-icon"><i class="fas fa-image"></i></div>
+          <h4>Image to PDF</h4>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:0.35rem;">Convert images</p>
+        </div>
+        <div class="tool-card" onclick="StudyAI.Toast.show('OCR Scanner: Integrate Tesseract.js or cloud OCR in production','info')">
+          <div class="tool-icon"><i class="fas fa-scan"></i></div>
+          <h4>OCR Scanner</h4>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:0.35rem;">Extract text from images</p>
+        </div>
+        <div class="tool-card" onclick="location.href='ai-assistant.html'">
+          <div class="tool-icon"><i class="fas fa-robot"></i></div>
+          <h4>AI Assistant</h4>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-top:0.35rem;">Smart study help</p>
+        </div>
+      </div>
+
+      <!-- Tool Panels -->
+      <div id="tool-panel" class="hidden mt-4">
+        <!-- Percentage -->
+        <div id="tool-percentage" class="calc-box hidden">
+          <h3 class="mb-3">Percentage Calculator</h3>
+          <div class="form-group"><label>Value</label><input type="number" id="pct-val" class="form-input" placeholder="e.g. 50"></div>
+          <div class="form-group"><label>Percentage (%)</label><input type="number" id="pct-pct" class="form-input" placeholder="e.g. 20"></div>
+          <button class="btn btn-primary w-full" onclick="calcPercentage()">Calculate</button>
+          <div class="calc-result" id="pct-result">Result will appear here</div>
+        </div>
+        <!-- Age -->
+        <div id="tool-age" class="calc-box hidden">
+          <h3 class="mb-3">Age Calculator</h3>
+          <div class="form-group"><label>Date of Birth</label><input type="date" id="age-dob" class="form-input"></div>
+          <button class="btn btn-primary w-full" onclick="calcAge()">Calculate Age</button>
+          <div class="calc-result" id="age-result">Result will appear here</div>
+        </div>
+        <!-- CGPA -->
+        <div id="tool-cgpa" class="calc-box hidden">
+          <h3 class="mb-3">CGPA to Percentage</h3>
+          <div class="form-group"><label>CGPA (out of 10)</label><input type="number" id="cgpa-val" class="form-input" step="0.01" min="0" max="10" placeholder="e.g. 8.5"></div>
+          <button class="btn btn-primary w-full" onclick="calcCGPA()">Convert</button>
+          <div class="calc-result" id="cgpa-result">Result will appear here</div>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.75rem;text-align:center;">Formula: Percentage = CGPA × 9.5</p>
+        </div>
+        <!-- Resume -->
+        <div id="tool-resume" class="calc-box hidden" style="max-width:600px;">
+          <h3 class="mb-3">Resume Builder</h3>
+          <div class="form-group"><label>Full Name</label><input type="text" id="res-name" class="form-input"></div>
+          <div class="form-group"><label>Email</label><input type="email" id="res-email" class="form-input"></div>
+          <div class="form-group"><label>Phone</label><input type="tel" id="res-phone" class="form-input"></div>
+          <div class="form-group"><label>Education</label><textarea id="res-edu" class="form-input" rows="2"></textarea></div>
+          <div class="form-group"><label>Skills</label><input type="text" id="res-skills" class="form-input" placeholder="Comma separated"></div>
+          <div class="form-group"><label>Experience / Projects</label><textarea id="res-exp" class="form-input" rows="3"></textarea></div>
+          <button class="btn btn-primary w-full" onclick="generateResume()">Generate Resume</button>
+          <div id="resume-preview" class="hidden mt-3" style="background:var(--bg-tertiary);padding:1.5rem;border-radius:12px;"></div>
+        </div>
+        <!-- PDF Tools -->
+        <div id="tool-pdf" class="calc-box hidden">
+          <h3 class="mb-3">PDF Tools</h3>
+          <p style="color:var(--text-secondary);margin-bottom:1rem;">Upload PDFs to merge, split or compress. In production this uses Firebase Storage + pdf-lib.</p>
+          <input type="file" accept=".pdf" multiple class="form-input mb-3" id="pdf-files">
+          <div class="flex gap-2">
+            <button class="btn btn-primary" onclick="StudyAI.Toast.show('PDF merge ready for production integration','info')">Merge</button>
+            <button class="btn btn-secondary" onclick="StudyAI.Toast.show('PDF split ready for production','info')">Split</button>
+            <button class="btn btn-secondary" onclick="StudyAI.Toast.show('PDF compress ready for production','info')">Compress</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal">
+      <div class="modal-header"><h3>Login</h3><button class="modal-close" onclick="closeModal('auth-modal')"><i class="fas fa-times"></i></button></div>
+      <div class="modal-body">
+        <form id="login-form">
+          <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-input" required></div>
+          <div class="form-group"><label>Password</label><input type="password" id="login-password" class="form-input" required></div>
+          <button type="submit" class="btn btn-primary w-full">Login</button>
+        </form>
+        <form id="signup-form" class="hidden"></form>
+        <button class="btn btn-secondary w-full mt-2" onclick="StudyAI.AuthManager.googleLogin()"><i class="fab fa-google"></i> Google</button>
+      </div>
+    </div>
+  </div>
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="../js/db.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    function showTool(name) {
+      document.getElementById('tool-panel').classList.remove('hidden');
+      ['percentage','age','cgpa','resume','pdf'].forEach(t => {
+        document.getElementById('tool-' + t)?.classList.add('hidden');
+      });
+      document.getElementById('tool-' + name)?.classList.remove('hidden');
+      document.getElementById('tool-panel').scrollIntoView({ behavior: 'smooth' });
+    }
+    function calcPercentage() {
+      const v = parseFloat(document.getElementById('pct-val').value);
+      const p = parseFloat(document.getElementById('pct-pct').value);
+      if (isNaN(v) || isNaN(p)) { StudyAI.Toast.show('Enter valid numbers','error'); return; }
+      document.getElementById('pct-result').textContent = `${p}% of ${v} = ${(v * p / 100).toFixed(2)}`;
+    }
+    function calcAge() {
+      const dob = new Date(document.getElementById('age-dob').value);
+      if (isNaN(dob)) { StudyAI.Toast.show('Select a valid date','error'); return; }
+      const now = new Date();
+      let years = now.getFullYear() - dob.getFullYear();
+      let months = now.getMonth() - dob.getMonth();
+      let days = now.getDate() - dob.getDate();
+      if (days < 0) { months--; days += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
+      if (months < 0) { years--; months += 12; }
+      document.getElementById('age-result').textContent = `${years} years, ${months} months, ${days} days`;
+    }
+    function calcCGPA() {
+      const c = parseFloat(document.getElementById('cgpa-val').value);
+      if (isNaN(c) || c < 0 || c > 10) { StudyAI.Toast.show('Enter CGPA between 0-10','error'); return; }
+      document.getElementById('cgpa-result').textContent = `Percentage ≈ ${(c * 9.5).toFixed(2)}%`;
+    }
+    function generateResume() {
+      const name = document.getElementById('res-name').value || 'Your Name';
+      const email = document.getElementById('res-email').value || '';
+      const phone = document.getElementById('res-phone').value || '';
+      const edu = document.getElementById('res-edu').value || '';
+      const skills = document.getElementById('res-skills').value || '';
+      const exp = document.getElementById('res-exp').value || '';
+      const preview = document.getElementById('resume-preview');
+      preview.classList.remove('hidden');
+      preview.innerHTML = `
+        <h2 style="margin-bottom:0.5rem;">${name}</h2>
+        <p style="color:var(--text-muted);font-size:0.9rem;">${email} ${phone ? '• ' + phone : ''}</p>
+        <hr style="margin:1rem 0;border-color:var(--border);">
+        <h4>Education</h4><p style="margin-bottom:1rem;">${edu || '—'}</p>
+        <h4>Skills</h4><p style="margin-bottom:1rem;">${skills || '—'}</p>
+        <h4>Experience / Projects</h4><p>${exp || '—'}</p>
+        <button class="btn btn-primary btn-sm mt-3" onclick="window.print()">Print / Save as PDF</button>
+      `;
+    }
+  </script>
+</body>
+</html>

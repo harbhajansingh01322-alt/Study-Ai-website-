@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Previous Year Papers - StudyAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="logo">
+        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        <span>Study<span class="gradient-text">AI</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="papers.html" class="nav-link active">Previous Papers</a>
+        <a href="pdf-library.html" class="nav-link">PDF Library</a>
+        <a href="quiz.html" class="nav-link">Quizzes</a>
+      </div>
+      <div class="nav-actions">
+        <button class="icon-btn" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button class="btn btn-primary btn-sm" id="login-btn" onclick="openModal('auth-modal')">Login</button>
+        <button class="mobile-menu-btn" onclick="toggleMobileNav()"><i class="fas fa-bars"></i></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">📥 Previous Year Papers</h1>
+      <p class="page-subtitle">Exam-wise and subject-wise past papers for download</p>
+    </div>
+  </div>
+
+  <section class="section" style="padding-top:1rem;">
+    <div class="container">
+      <div class="flex gap-2 mb-3" style="flex-wrap:wrap;">
+        <button class="btn btn-primary btn-sm paper-filter active" data-exam="all">All</button>
+        <button class="btn btn-secondary btn-sm paper-filter" data-exam="ssc">SSC</button>
+        <button class="btn btn-secondary btn-sm paper-filter" data-exam="banking">Banking</button>
+        <button class="btn btn-secondary btn-sm paper-filter" data-exam="upsc">UPSC</button>
+        <button class="btn btn-secondary btn-sm paper-filter" data-exam="railway">Railway</button>
+        <button class="btn btn-secondary btn-sm paper-filter" data-exam="haryana">Haryana</button>
+      </div>
+      <div class="notes-grid" id="papers-grid"></div>
+    </div>
+  </section>
+
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal">
+      <div class="modal-header"><h3>Login</h3><button class="modal-close" onclick="closeModal('auth-modal')"><i class="fas fa-times"></i></button></div>
+      <div class="modal-body">
+        <form id="login-form">
+          <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-input" required></div>
+          <div class="form-group"><label>Password</label><input type="password" id="login-password" class="form-input" required></div>
+          <button type="submit" class="btn btn-primary w-full">Login</button>
+        </form>
+        <form id="signup-form" class="hidden"></form>
+        <button class="btn btn-secondary w-full mt-2" onclick="StudyAI.AuthManager.googleLogin()"><i class="fab fa-google"></i> Google</button>
+      </div>
+    </div>
+  </div>
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="../js/db.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    const papers = [
+      { title: 'SSC CGL 2024 Tier-1', exam: 'ssc', subject: 'All', year: 2024, pages: 25 },
+      { title: 'SSC CGL 2023 Tier-1', exam: 'ssc', subject: 'All', year: 2023, pages: 25 },
+      { title: 'SSC CHSL 2024', exam: 'ssc', subject: 'All', year: 2024, pages: 20 },
+      { title: 'IBPS PO Prelims 2023', exam: 'banking', subject: 'All', year: 2023, pages: 30 },
+      { title: 'SBI Clerk Prelims 2024', exam: 'banking', subject: 'All', year: 2024, pages: 28 },
+      { title: 'UPSC Prelims GS 2024', exam: 'upsc', subject: 'GS', year: 2024, pages: 40 },
+      { title: 'UPSC Prelims CSAT 2024', exam: 'upsc', subject: 'CSAT', year: 2024, pages: 35 },
+      { title: 'RRB NTPC 2021 CBT-1', exam: 'railway', subject: 'All', year: 2021, pages: 32 },
+      { title: 'Haryana CET 2023', exam: 'haryana', subject: 'All', year: 2023, pages: 22 },
+      { title: 'SSC MTS 2023', exam: 'ssc', subject: 'All', year: 2023, pages: 18 }
+    ];
+
+    function render(list) {
+      document.getElementById('papers-grid').innerHTML = list.map(p => `
+        <div class="note-card">
+          <div class="note-icon"><i class="fas fa-file-download"></i></div>
+          <h4 class="note-title">${p.title}</h4>
+          <div class="note-meta">${p.exam.toUpperCase()} • ${p.subject} • ${p.year} • ${p.pages} pages</div>
+          <button class="btn btn-primary btn-sm mt-2" onclick="StudyAI.Toast.show('Downloading ${p.title}...','success')">
+            <i class="fas fa-download"></i> Download
+          </button>
+        </div>
+      `).join('');
+    }
+
+    document.querySelectorAll('.paper-filter').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.paper-filter').forEach(b => { b.classList.remove('active','btn-primary'); b.classList.add('btn-secondary'); });
+        btn.classList.add('active','btn-primary'); btn.classList.remove('btn-secondary');
+        const exam = btn.dataset.exam;
+        render(exam === 'all' ? papers : papers.filter(p => p.exam === exam));
+      });
+    });
+    render(papers);
+  </script>
+</body>
+</html>

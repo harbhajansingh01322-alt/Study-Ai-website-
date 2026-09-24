@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - StudyAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="logo"><div class="logo-icon"><i class="fas fa-graduation-cap"></i></div><span>Study<span class="gradient-text">AI</span></span></a>
+      <div class="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="dashboard.html" class="nav-link active">Dashboard</a>
+        <a href="quiz.html" class="nav-link">Quizzes</a>
+        <a href="ai-assistant.html" class="nav-link">AI Assistant</a>
+        <a href="planner.html" class="nav-link">Planner</a>
+      </div>
+      <div class="nav-actions">
+        <button class="icon-btn" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button class="btn btn-primary btn-sm" id="login-btn" onclick="openModal('auth-modal')">Login</button>
+        <div class="user-menu hidden" id="user-menu">
+          <span id="user-name" style="font-weight:600;margin-right:0.5rem;"></span>
+          <button class="icon-btn" onclick="AuthManager.logout()"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div class="dashboard-grid">
+    <aside class="sidebar">
+      <a href="dashboard.html" class="sidebar-link active"><i class="fas fa-tachometer-alt"></i> Overview</a>
+      <a href="quiz.html" class="sidebar-link"><i class="fas fa-question-circle"></i> Quizzes</a>
+      <a href="favorites.html" class="sidebar-link"><i class="fas fa-heart"></i> Favorites</a>
+      <a href="planner.html" class="sidebar-link"><i class="fas fa-calendar"></i> Planner</a>
+      <a href="ai-assistant.html" class="sidebar-link"><i class="fas fa-robot"></i> AI Assistant</a>
+      <a href="tools.html" class="sidebar-link"><i class="fas fa-tools"></i> Tools</a>
+    </aside>
+    <div class="dashboard-content">
+      <h1 class="mb-3">Welcome back, <span id="dash-name">Student</span>!</h1>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-card-icon purple"><i class="fas fa-fire"></i></div><div><div style="font-size:1.5rem;font-weight:800;" id="streak-val">0</div><div style="color:var(--text-muted);font-size:0.85rem;">Day Streak</div></div></div>
+        <div class="stat-card"><div class="stat-card-icon green"><i class="fas fa-trophy"></i></div><div><div style="font-size:1.5rem;font-weight:800;" id="points-val">0</div><div style="color:var(--text-muted);font-size:0.85rem;">Points</div></div></div>
+        <div class="stat-card"><div class="stat-card-icon orange"><i class="fas fa-check-circle"></i></div><div><div style="font-size:1.5rem;font-weight:800;" id="quizzes-val">0</div><div style="color:var(--text-muted);font-size:0.85rem;">Quizzes Done</div></div></div>
+        <div class="stat-card"><div class="stat-card-icon pink"><i class="fas fa-bookmark"></i></div><div><div style="font-size:1.5rem;font-weight:800;" id="notes-val">0</div><div style="color:var(--text-muted);font-size:0.85rem;">Saved Items</div></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;" class="dash-panels">
+        <div class="card" style="padding:1.5rem;">
+          <h3 class="mb-3">Quiz Performance</h3>
+          <div id="perf-bars"></div>
+        </div>
+        <div class="card" style="padding:1.5rem;">
+          <h3 class="mb-3">Recent Quiz History</h3>
+          <div id="quiz-history-list"><p style="color:var(--text-muted);">No quizzes yet. <a href="quiz.html" style="color:var(--accent-primary);">Take one now</a></p></div>
+        </div>
+      </div>
+      <div class="card mt-3" style="padding:1.5rem;">
+        <h3 class="mb-3">Today's Tasks</h3>
+        <div id="dash-tasks"></div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal">
+      <div class="modal-header"><h3>Login Required</h3><button class="modal-close" onclick="closeModal('auth-modal')"><i class="fas fa-times"></i></button></div>
+      <div class="modal-body">
+        <form id="login-form">
+          <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-input" required></div>
+          <div class="form-group"><label>Password</label><input type="password" id="login-password" class="form-input" required></div>
+          <button type="submit" class="btn btn-primary w-full">Login</button>
+        </form>
+        <form id="signup-form" class="hidden">
+          <div class="form-group"><label>Name</label><input type="text" id="signup-name" class="form-input" required></div>
+          <div class="form-group"><label>Email</label><input type="email" id="signup-email" class="form-input" required></div>
+          <div class="form-group"><label>Password</label><input type="password" id="signup-password" class="form-input" required></div>
+          <button type="submit" class="btn btn-primary w-full">Sign Up</button>
+        </form>
+        <div class="divider">or</div>
+        <button class="btn btn-secondary w-full" onclick="AuthManager.googleLogin()"><i class="fab fa-google"></i> Google</button>
+      </div>
+    </div>
+  </div>
+  <div id="toast-container" class="toast-container"></div>
+  <script src="../js/db.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = AuthManager.currentUser;
+      if (!user) { openModal('auth-modal'); return; }
+      document.getElementById('dash-name').textContent = user.name;
+      document.getElementById('streak-val').textContent = user.streak || 0;
+      document.getElementById('points-val').textContent = user.points || 0;
+      const history = DB.getQuizHistory(user.uid);
+      document.getElementById('quizzes-val').textContent = history.length;
+      if (history.length) {
+        document.getElementById('quiz-history-list').innerHTML = history.slice(0, 8).map(h =>
+          '<div style="display:flex;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid var(--border);font-size:0.9rem;"><span>' + h.title + '</span><span style="font-weight:600;color:var(--accent-primary);">' + h.percent + '%</span></div>'
+        ).join('');
+        // Performance by quiz
+        const byQuiz = {};
+        history.forEach(h => { if (!byQuiz[h.title] || h.percent > byQuiz[h.title]) byQuiz[h.title] = h.percent; });
+        document.getElementById('perf-bars').innerHTML = Object.entries(byQuiz).slice(0, 5).map(([title, pct]) =>
+          '<div class="mb-2"><div class="flex justify-between" style="font-size:0.9rem;margin-bottom:0.35rem;"><span>' + title + '</span><span>' + pct + '%</span></div><div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div></div>'
+        ).join('');
+      } else {
+        document.getElementById('perf-bars').innerHTML = '<p style="color:var(--text-muted);">Complete quizzes to see progress.</p>';
+      }
+      const favs = DB.getFavorites(user.uid);
+      document.getElementById('notes-val').textContent = (favs.pdfs||[]).length + (favs.notes||[]).length + (favs.videos||[]).length;
+      const tasks = DB.getTasks(user.uid);
+      const today = tasks.filter(t => !t.done).slice(0, 5);
+      document.getElementById('dash-tasks').innerHTML = today.length
+        ? today.map(t => '<div style="padding:0.5rem 0;border-bottom:1px solid var(--border);">' + t.text + '</div>').join('') + '<a href="planner.html" class="btn btn-sm btn-outline mt-2">Manage tasks</a>'
+        : '<p style="color:var(--text-muted);">No pending tasks. <a href="planner.html" style="color:var(--accent-primary);">Add some</a></p>';
+    });
+  </script>
+  <style>@media(max-width:768px){.dash-panels{grid-template-columns:1fr!important;}}</style>
+</body>
+</html>

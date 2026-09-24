@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search - StudyAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="logo"><div class="logo-icon"><i class="fas fa-graduation-cap"></i></div><span>Study<span class="gradient-text">AI</span></span></a>
+      <div class="nav-actions">
+        <button class="icon-btn" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button class="btn btn-primary btn-sm" id="login-btn" onclick="openModal('auth-modal')">Login</button>
+        <div class="user-menu hidden" id="user-menu"><span id="user-name" style="font-weight:600;margin-right:0.5rem;"></span></div>
+      </div>
+    </div>
+  </nav>
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">Search</h1>
+      <div class="search-container mt-3" style="max-width:600px;">
+        <form class="search-bar" onsubmit="event.preventDefault();runSearch(document.getElementById('search-input').value)">
+          <i class="fas fa-search" style="color:var(--text-muted);"></i>
+          <input type="text" id="search-input" placeholder="Search notes, PDFs, quizzes, blogs, videos...">
+          <button type="submit" class="search-btn"><i class="fas fa-arrow-right"></i></button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <section class="section" style="padding-top:1rem;">
+    <div class="container">
+      <p id="search-info" style="color:var(--text-muted);margin-bottom:1.5rem;"></p>
+      <div class="notes-grid" id="search-results"></div>
+    </div>
+  </section>
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal">
+      <div class="modal-header"><h3>Login</h3><button class="modal-close" onclick="closeModal('auth-modal')"><i class="fas fa-times"></i></button></div>
+      <div class="modal-body">
+        <form id="login-form">
+          <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-input" required></div>
+          <div class="form-group"><label>Password</label><input type="password" id="login-password" class="form-input" required></div>
+          <button type="submit" class="btn btn-primary w-full">Login</button>
+        </form>
+        <form id="signup-form" class="hidden">
+          <div class="form-group"><label>Name</label><input type="text" id="signup-name" class="form-input" required></div>
+          <div class="form-group"><label>Email</label><input type="email" id="signup-email" class="form-input" required></div>
+          <div class="form-group"><label>Password</label><input type="password" id="signup-password" class="form-input" required></div>
+          <button type="submit" class="btn btn-primary w-full">Sign Up</button>
+        </form>
+        <div class="divider">or</div>
+        <button class="btn btn-secondary w-full" onclick="AuthManager.googleLogin()"><i class="fab fa-google"></i> Google</button>
+      </div>
+    </div>
+  </div>
+  <div id="toast-container" class="toast-container"></div>
+  <script src="../js/db.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    function runSearch(q) {
+      document.getElementById('search-input').value = q || '';
+      const results = DB.search(q);
+      document.getElementById('search-info').textContent = q
+        ? 'Found ' + results.length + ' result' + (results.length !== 1 ? 's' : '') + ' for "' + q + '"'
+        : 'Enter a search term above.';
+      const icons = { PDF: 'fa-file-pdf', Quiz: 'fa-question-circle', Blog: 'fa-newspaper', Video: 'fa-play-circle', Course: 'fa-book' };
+      document.getElementById('search-results').innerHTML = results.length
+        ? results.map(r => '<a href="' + r.link + '" class="note-card"><div class="note-icon"><i class="fas ' + (icons[r.type]||'fa-search') + '"></i></div><h4 class="note-title">' + r.title + '</h4><div class="note-meta">' + r.type + '</div></a>').join('')
+        : '<p style="color:var(--text-muted);grid-column:1/-1;">No results found.</p>';
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const q = new URLSearchParams(location.search).get('q') || '';
+      runSearch(q);
+    });
+  </script>
+</body>
+</html>

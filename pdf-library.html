@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Library - StudyAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="logo"><div class="logo-icon"><i class="fas fa-graduation-cap"></i></div><span>Study<span class="gradient-text">AI</span></span></a>
+      <div class="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="study-material.html" class="nav-link">Study Material</a>
+        <a href="pdf-library.html" class="nav-link active">PDF Library</a>
+        <a href="quiz.html" class="nav-link">Quizzes</a>
+        <a href="ai-assistant.html" class="nav-link">AI Assistant</a>
+      </div>
+      <div class="nav-actions">
+        <button class="icon-btn" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button class="btn btn-primary btn-sm" id="login-btn" onclick="openModal('auth-modal')">Login</button>
+        <div class="user-menu hidden" id="user-menu"><span id="user-name" style="font-weight:600;margin-right:0.5rem;"></span></div>
+        <button class="mobile-menu-btn" onclick="toggleMobileNav()"><i class="fas fa-bars"></i></button>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-nav" id="mobile-nav">
+    <a href="../index.html" class="nav-link">Home</a>
+    <a href="pdf-library.html" class="nav-link">PDF Library</a>
+    <a href="papers.html" class="nav-link">Previous Papers</a>
+  </div>
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">PDF Library</h1>
+      <p class="page-subtitle">Notes, previous papers, current affairs and syllabus</p>
+      <div class="search-container mt-3" style="max-width:500px;">
+        <div class="search-bar">
+          <i class="fas fa-search" style="color:var(--text-muted);"></i>
+          <input type="text" id="pdf-search" placeholder="Search PDFs..." oninput="filterPDFs()">
+        </div>
+      </div>
+    </div>
+  </div>
+  <section class="section" style="padding-top:1rem;">
+    <div class="container">
+      <div class="flex gap-2 mb-3" style="flex-wrap:wrap;" id="pdf-filters">
+        <button class="btn btn-primary btn-sm pdf-cat active" data-cat="all" onclick="setCat('all',this)">All</button>
+        <button class="btn btn-secondary btn-sm pdf-cat" data-cat="notes" onclick="setCat('notes',this)">Notes</button>
+        <button class="btn btn-secondary btn-sm pdf-cat" data-cat="papers" onclick="setCat('papers',this)">Previous Papers</button>
+        <button class="btn btn-secondary btn-sm pdf-cat" data-cat="current" onclick="setCat('current',this)">Current Affairs</button>
+        <button class="btn btn-secondary btn-sm pdf-cat" data-cat="syllabus" onclick="setCat('syllabus',this)">Syllabus</button>
+      </div>
+      <div class="notes-grid" id="pdf-grid"></div>
+    </div>
+  </section>
+  <div class="modal-overlay" id="preview-modal">
+    <div class="modal" style="max-width:700px;">
+      <div class="modal-header"><h3 id="preview-title">Preview</h3><button class="modal-close" onclick="closeModal('preview-modal')"><i class="fas fa-times"></i></button></div>
+      <div class="modal-body">
+        <div style="background:var(--bg-tertiary);border-radius:12px;padding:2rem;min-height:200px;">
+          <p id="preview-desc" style="color:var(--text-secondary);line-height:1.7;"></p>
+        </div>
+        <div class="flex gap-3 mt-3" style="justify-content:center;">
+          <button class="btn btn-primary" onclick="downloadCurrent()"><i class="fas fa-download"></i> Download</button>
+          <button class="btn btn-secondary" onclick="favCurrent()"><i class="fas fa-heart"></i> Favorite</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal">
+      <div class="modal-header"><h3>Login</h3><button class="modal-close" onclick="closeModal('auth-modal')"><i class="fas fa-times"></i></button></div>
+      <div class="modal-body">
+        <form id="login-form">
+          <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-input" required></div>
+          <div class="form-group"><label>Password</label><input type="password" id="login-password" class="form-input" required></div>
+          <button type="submit" class="btn btn-primary w-full">Login</button>
+        </form>
+        <form id="signup-form" class="hidden">
+          <div class="form-group"><label>Name</label><input type="text" id="signup-name" class="form-input" required></div>
+          <div class="form-group"><label>Email</label><input type="email" id="signup-email" class="form-input" required></div>
+          <div class="form-group"><label>Password</label><input type="password" id="signup-password" class="form-input" required></div>
+          <button type="submit" class="btn btn-primary w-full">Sign Up</button>
+        </form>
+        <div class="divider">or</div>
+        <button class="btn btn-secondary w-full" onclick="AuthManager.googleLogin()"><i class="fab fa-google"></i> Google</button>
+      </div>
+    </div>
+  </div>
+  <div id="toast-container" class="toast-container"></div>
+  <script src="../js/db.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    let activeCat = 'all';
+    let currentPDF = null;
+    function setCat(cat, btn) {
+      activeCat = cat;
+      document.querySelectorAll('.pdf-cat').forEach(b => { b.classList.remove('active','btn-primary'); b.classList.add('btn-secondary'); });
+      btn.classList.add('active','btn-primary'); btn.classList.remove('btn-secondary');
+      filterPDFs();
+    }
+    function filterPDFs() {
+      const q = (document.getElementById('pdf-search').value || '').toLowerCase();
+      let list = DB.getPDFs();
+      if (activeCat !== 'all') list = list.filter(p => p.category === activeCat);
+      if (q) list = list.filter(p => p.title.toLowerCase().includes(q) || p.exam.toLowerCase().includes(q));
+      document.getElementById('pdf-grid').innerHTML = list.map(p =>
+        '<div class="note-card"><div class="note-icon"><i class="fas fa-file-pdf"></i></div>' +
+        '<h4 class="note-title">' + p.title + '</h4>' +
+        '<div class="note-meta">' + p.exam + ' · ' + p.pages + ' pages · ' + p.size + '</div>' +
+        '<div class="flex gap-2 mt-2">' +
+        '<button class="btn btn-primary btn-sm" onclick="previewPDF(\'' + p.id + '\')"><i class="fas fa-eye"></i> Preview</button>' +
+        '<button class="btn btn-secondary btn-sm" onclick="downloadPDF(\'' + p.id + '\')"><i class="fas fa-download"></i></button>' +
+        '<button class="btn btn-ghost btn-sm" onclick="favPDF(\'' + p.id + '\')"><i class="fas fa-heart"></i></button></div></div>'
+      ).join('') || '<p style="color:var(--text-muted);">No PDFs found.</p>';
+    }
+    function previewPDF(id) {
+      currentPDF = DB.getPDFs().find(p => p.id === id);
+      if (!currentPDF) return;
+      document.getElementById('preview-title').textContent = currentPDF.title;
+      document.getElementById('preview-desc').textContent = currentPDF.content || (currentPDF.exam + ' · ' + currentPDF.pages + ' pages');
+      openModal('preview-modal');
+    }
+    function downloadPDF(id) {
+      const p = DB.getPDFs().find(x => x.id === id) || currentPDF;
+      if (!p) return;
+      const content = 'StudyAI - ' + p.title + '\n\n' + (p.content || '') + '\n\nExam: ' + p.exam + '\nPages: ' + p.pages;
+      const blob = new Blob([content], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = p.title.replace(/\s+/g, '_') + '.txt';
+      a.click();
+      Toast.show('Downloaded: ' + p.title, 'success');
+      p.downloads = (p.downloads || 0) + 1;
+      DB.savePDF(p);
+    }
+    function downloadCurrent() { if (currentPDF) downloadPDF(currentPDF.id); }
+    function favPDF(id) {
+      if (!AuthManager.requireAuth()) return;
+      const added = DB.toggleFavorite(AuthManager.currentUser.uid, 'pdfs', id);
+      Toast.show(added ? 'Added to favorites' : 'Removed from favorites', added ? 'success' : 'info');
+    }
+    function favCurrent() { if (currentPDF) favPDF(currentPDF.id); }
+    document.addEventListener('DOMContentLoaded', filterPDFs);
+  </script>
+</body>
+</html>

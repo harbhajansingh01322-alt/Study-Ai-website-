@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="StudyAI Quiz System - Unlimited MCQs with timer, results, score and leaderboard for SSC, Banking, UPSC and more.">
+  <title>Quizzes - StudyAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="logo">
+        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        <span>Study<span class="gradient-text">AI</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="study-material.html" class="nav-link">Study Material</a>
+        <a href="pdf-library.html" class="nav-link">PDF Library</a>
+        <a href="quiz.html" class="nav-link active">Quizzes</a>
+        <a href="ai-assistant.html" class="nav-link">AI Assistant</a>
+        <a href="videos.html" class="nav-link">Videos</a>
+        <a href="planner.html" class="nav-link">Planner</a>
+      </div>
+      <div class="nav-actions">
+        <div class="lang-switch">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="hi">हिं</button>
+        </div>
+        <button class="icon-btn" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button class="btn btn-primary btn-sm" id="login-btn" onclick="openModal('auth-modal')">Login</button>
+        <div class="user-menu hidden" id="user-menu">
+          <button class="icon-btn" onclick="document.getElementById('user-dropdown').classList.toggle('hidden')">
+            <i class="fas fa-user-circle"></i>
+          </button>
+          <div class="hidden" id="user-dropdown" style="position:absolute;top:60px;right:20px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:12px;padding:0.5rem;min-width:180px;box-shadow:var(--shadow-lg);z-index:100;">
+            <div style="padding:0.75rem 1rem;border-bottom:1px solid var(--border);font-weight:600;" id="user-name">User</div>
+            <a href="dashboard.html" class="sidebar-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <button class="sidebar-link w-full" onclick="StudyAI.AuthManager.logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+          </div>
+        </div>
+        <button class="mobile-menu-btn" onclick="toggleMobileNav()"><i class="fas fa-bars"></i></button>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-nav" id="mobile-nav">
+    <a href="../index.html" class="nav-link">Home</a>
+    <a href="study-material.html" class="nav-link">Study Material</a>
+    <a href="pdf-library.html" class="nav-link">PDF Library</a>
+    <a href="quiz.html" class="nav-link">Quizzes</a>
+    <a href="ai-assistant.html" class="nav-link">AI Assistant</a>
+    <a href="videos.html" class="nav-link">Videos</a>
+    <a href="dashboard.html" class="nav-link">Dashboard</a>
+  </div>
+
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">📝 Quiz System</h1>
+      <p class="page-subtitle">Practice unlimited MCQs with timer, instant results & leaderboard</p>
+    </div>
+  </div>
+
+  <section class="section" style="padding-top:1rem;">
+    <div class="container">
+      <!-- Quiz Selection -->
+      <div id="quiz-select">
+        <div class="courses-grid" id="quiz-list"></div>
+        <div class="mt-4">
+          <h2 class="mb-3">Leaderboard</h2>
+          <div class="card" style="padding:1.5rem;" id="leaderboard">
+            <p style="color:var(--text-muted);">Take a quiz to appear on the leaderboard!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quiz Area -->
+      <div id="quiz-area" class="hidden quiz-container">
+        <div class="quiz-header">
+          <div>
+            <h2 id="quiz-title">Quiz</h2>
+            <div id="q-progress" style="color:var(--text-muted);font-size:0.9rem;"></div>
+          </div>
+          <div class="quiz-timer" id="quiz-timer">15:00</div>
+        </div>
+        <div id="question-container"></div>
+      </div>
+
+      <!-- Result -->
+      <div id="quiz-result" class="hidden"></div>
+    </div>
+  </section>
+
+  <!-- Auth Modal (shared) -->
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Welcome to StudyAI</h3>
+        <button class="modal-close" onclick="closeModal('auth-modal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="flex gap-2 mb-3" style="background:var(--bg-tertiary);padding:0.25rem;border-radius:10px;">
+          <button class="btn btn-sm active w-full" data-auth-tab="login" style="background:var(--accent-primary);color:white;">Login</button>
+          <button class="btn btn-sm w-full" data-auth-tab="signup">Sign Up</button>
+        </div>
+        <form id="login-form">
+          <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-input" required></div>
+          <div class="form-group"><label>Password</label><input type="password" id="login-password" class="form-input" required></div>
+          <button type="submit" class="btn btn-primary w-full">Login</button>
+        </form>
+        <form id="signup-form" class="hidden">
+          <div class="form-group"><label>Name</label><input type="text" id="signup-name" class="form-input" required></div>
+          <div class="form-group"><label>Email</label><input type="email" id="signup-email" class="form-input" required></div>
+          <div class="form-group"><label>Password</label><input type="password" id="signup-password" class="form-input" required></div>
+          <button type="submit" class="btn btn-primary w-full">Sign Up</button>
+        </form>
+        <div class="divider">or</div>
+        <button class="btn btn-secondary w-full" onclick="AuthManager.googleLogin()"><i class="fab fa-google"></i> Google</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+  <script src="../js/db.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/quiz.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const colors = ['#6366f1','#10b981','#f59e0b','#ec4899','#3b82f6','#8b5cf6','#14b8a6','#f43f5e'];
+      const icons = ['fa-calculator','fa-brain','fa-language','fa-landmark','fa-flask','fa-book','fa-globe','fa-lightbulb'];
+      const bank = DB.getQuizBank();
+      const grid = document.getElementById('quiz-list');
+      grid.innerHTML = Object.values(bank).map((quiz, i) => {
+        const mins = Math.round((quiz.timeLimit || 600) / 60);
+        const n = quiz.questions?.length || 0;
+        return '<div class="course-card" style="cursor:pointer;" onclick="QuizEngine.start(\'' + quiz.id + '\')">' +
+          '<div class="course-thumb" style="background:linear-gradient(135deg,' + colors[i % colors.length] + ',' + colors[i % colors.length] + 'aa);">' +
+          '<i class="fas ' + icons[i % icons.length] + '"></i></div>' +
+          '<div class="course-body"><h3 class="course-title">' + quiz.title + '</h3>' +
+          '<div class="course-meta"><span>' + n + ' Questions</span><span>' + mins + ' min</span></div>' +
+          '<div class="course-footer"><div class="course-rating">' + (quiz.category || 'Quiz') + '</div>' +
+          '<span class="btn btn-primary btn-sm">Start Quiz</span></div></div></div>';
+      }).join('');
+
+      const lb = DB.getLeaderboard();
+      const el = document.getElementById('leaderboard');
+      if (lb.length) {
+        el.innerHTML = lb.slice(0, 10).map((e, i) =>
+          '<div style="display:flex;justify-content:space-between;padding:0.75rem 0;border-bottom:1px solid var(--border);">' +
+          '<span><strong>#' + (i+1) + '</strong> ' + e.name + ' · ' + (e.quiz||'') + '</span>' +
+          '<span style="color:var(--accent-primary);font-weight:600;">' + e.percent + '% (' + e.score + '/' + e.total + ')</span></div>'
+        ).join('');
+      }
+      const start = new URLSearchParams(location.search).get('start');
+      if (start) QuizEngine.start(start);
+    });
+  </script>
+</body>
+</html>
