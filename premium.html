@@ -34,17 +34,15 @@
     .upi-row code{flex:1;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:.65rem .75rem;font-size:.85rem;font-family:ui-monospace,monospace;overflow:hidden;text-overflow:ellipsis}
     .amt-note{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:.75rem;font-size:.875rem;color:#92400e;max-width:360px;margin:0 auto 1rem}
     .btn-pay{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;max-width:360px;margin:0 auto;padding:.9rem 1rem;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;font-weight:700;border:none;border-radius:12px;font-size:1rem;cursor:pointer;text-decoration:none}
-    .btn-pay:hover{filter:brightness(1.05)}
     .form-group{margin-bottom:1rem}
     .form-group label{display:block;font-size:.875rem;font-weight:600;margin-bottom:.35rem}
     .form-group input[type=text]{width:100%;padding:.75rem 1rem;border:1px solid #e2e8f0;border-radius:10px;font-size:1rem;box-sizing:border-box}
-    .upload-zone{border:2px dashed #cbd5e1;border-radius:12px;padding:1.5rem;text-align:center;cursor:pointer;transition:.2s}
+    .upload-zone{border:2px dashed #cbd5e1;border-radius:12px;padding:1.5rem;text-align:center;cursor:pointer}
     .upload-zone:hover,.upload-zone.has-file{border-color:#6366f1;background:#eef2ff}
     .upload-zone img{max-height:140px;border-radius:8px;margin-top:.5rem}
     .btn-submit{width:100%;padding:1rem;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-weight:800;border:none;border-radius:12px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem}
-    .btn-submit:disabled{opacity:.6;cursor:not-allowed}
-    .alert{padding:.75rem 1rem;border-radius:10px;font-size:.875rem;margin-bottom:1rem}
-    .alert-error{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
+    .btn-submit:disabled{opacity:.6}
+    .alert-error{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;padding:.75rem 1rem;border-radius:10px;font-size:.875rem;margin-bottom:1rem}
     .success-screen{text-align:center;padding:3rem 1rem}
     .success-screen i{font-size:3rem;color:#16a34a}
   </style>
@@ -63,43 +61,33 @@
         <a href="quiz.html" class="nav-link">Quizzes</a>
         <a href="ai-assistant.html" class="nav-link">AI Assistant</a>
         <a href="videos.html" class="nav-link">Videos</a>
-        <a href="premium.html" class="nav-link active">Premium</a>
+        <a href="premium.html" class="nav-link active" style="color:#d97706;font-weight:700"><i class="fas fa-crown"></i> Premium</a>
       </div>
       <div class="nav-actions">
         <a href="index.html" class="btn btn-primary btn-sm"><i class="fas fa-home"></i> Home</a>
-        <button class="mobile-menu-btn" onclick="document.getElementById('mobile-nav').classList.toggle('open')"><i class="fas fa-bars"></i></button>
       </div>
     </div>
   </nav>
-  <div class="mobile-nav" id="mobile-nav">
-    <a href="index.html" class="nav-link">Home</a>
-    <a href="study-material.html" class="nav-link">Study Material</a>
-    <a href="pdf-library.html" class="nav-link">PDF Library</a>
-    <a href="quiz.html" class="nav-link">Quizzes</a>
-    <a href="ai-assistant.html" class="nav-link">AI Assistant</a>
-    <a href="videos.html" class="nav-link">Videos</a>
-    <a href="premium.html" class="nav-link">Premium</a>
-  </div>
 
   <div class="premium-wrap" id="premium-app">
     <div class="premium-hero">
       <div class="badge"><i class="fas fa-crown"></i> Premium Membership</div>
       <h1>Unlock Your Full Potential</h1>
-      <p>Notes, mock tests, AI tutor & videos — unlocked after payment approval.</p>
+      <p>Notes, mock tests, AI tutor and videos — unlocked after payment approval.</p>
     </div>
 
     <div class="plans">
-      <div class="plan" data-plan="monthly" data-price="99" data-days="30" id="plan-monthly">
+      <div class="plan" data-plan="monthly" data-price="99" data-days="30">
         <div class="price">₹99 <span>/ 1 Month</span></div>
         <strong>Monthly Plan</strong>
         <ul>
-          <li><i class="fas fa-check"></i> All Premium Notes & PDFs</li>
+          <li><i class="fas fa-check"></i> All Premium Notes and PDFs</li>
           <li><i class="fas fa-check"></i> Unlimited Mock Tests</li>
           <li><i class="fas fa-check"></i> AI Chat Tutor</li>
           <li><i class="fas fa-check"></i> Video Lectures</li>
         </ul>
       </div>
-      <div class="plan selected" data-plan="yearly" data-price="499" data-days="365" id="plan-yearly">
+      <div class="plan selected" data-plan="yearly" data-price="499" data-days="365">
         <span class="best">BEST VALUE</span>
         <div class="price">₹499 <span>/ 12 Months</span></div>
         <strong>Yearly Plan</strong>
@@ -117,12 +105,13 @@
       <div class="pay-body">
         <div class="step"><span class="step-num">1</span> Pay via Google Pay / UPI</div>
         <div class="qr-box">
-          <img id="gpay-qr" alt="Google Pay QR Code" width="240" height="240" src="gpay-qr.png">
+          <img id="gpay-qr" alt="UPI QR Code" width="240" height="240"
+            src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=upi%3A%2F%2Fpay%3Fpa%3Dsharbhajan1322-5%40okaxis%26pn%3DStudyAI%26am%3D499%26cu%3DINR%26tn%3DStudyAI%2520Premium">
           <p style="font-size:.75rem;color:#64748b;margin:.5rem 0 0">Scan with Google Pay, PhonePe, Paytm or any UPI app</p>
           <p style="font-size:.8rem;font-weight:600;margin:.75rem 0 .25rem;color:#475569">UPI ID</p>
           <div class="upi-row">
             <code id="upi-id">sharbhajan1322-5@okaxis</code>
-            <button type="button" class="btn btn-secondary btn-sm" id="copy-upi" title="Copy UPI ID"><i class="fas fa-copy"></i> Copy</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="copy-upi"><i class="fas fa-copy"></i> Copy</button>
           </div>
           <div class="amt-note"><strong>Pay exactly ₹<span id="amt-note">499</span></strong><br><span style="font-size:.75rem">Exact amount helps faster approval</span></div>
           <a class="btn-pay" id="pay-link" href="upi://pay?pa=sharbhajan1322-5@okaxis&pn=StudyAI&am=499&cu=INR&tn=StudyAI%20Premium">
@@ -132,19 +121,17 @@
         </div>
 
         <div class="step" style="margin-top:1.5rem"><span class="step-num">2</span> After Payment — Submit Proof</div>
-        <div id="form-error" class="alert alert-error" style="display:none"></div>
+        <div id="form-error" class="alert-error" style="display:none"></div>
         <form id="payment-form">
           <div class="form-group">
             <label for="txn-id">Transaction ID / UTR Number *</label>
             <input type="text" id="txn-id" placeholder="e.g. 123456789012" required autocomplete="off">
-            <p style="font-size:.75rem;color:#94a3b8;margin:.25rem 0 0">Found in your UPI app payment confirmation</p>
           </div>
           <div class="form-group">
             <label>Payment Screenshot *</label>
             <div class="upload-zone" id="upload-zone">
               <i class="fas fa-cloud-upload-alt" style="font-size:1.5rem;color:#94a3b8"></i>
               <p style="margin:.5rem 0 0;font-size:.875rem;color:#64748b">Tap to upload payment screenshot</p>
-              <p style="font-size:.75rem;color:#94a3b8">PNG or JPG, max 5MB</p>
               <img id="preview" style="display:none" alt="Preview">
             </div>
             <input type="file" id="screenshot" accept="image/*" capture="environment" style="display:none">
@@ -153,7 +140,7 @@
             <i class="fas fa-crown"></i> Submit for Approval
           </button>
         </form>
-        <p style="font-size:.75rem;color:#94a3b8;text-align:center;margin:1rem 0 0">After you submit, an admin will verify the payment and activate Premium.</p>
+        <p style="font-size:.75rem;color:#94a3b8;text-align:center;margin:1rem 0 0">Admin will verify and activate Premium after you submit.</p>
       </div>
     </div>
   </div>
@@ -161,7 +148,7 @@
   <div class="success-screen" id="success-screen" style="display:none">
     <i class="fas fa-check-circle"></i>
     <h2 style="margin:.75rem 0">Request Submitted!</h2>
-    <p style="color:#64748b;max-width:360px;margin:0 auto 1.5rem">Your payment is under review. Premium access will be activated once an admin approves it.</p>
+    <p style="color:#64748b;max-width:360px;margin:0 auto 1.5rem">Your payment is under review. Premium activates after admin approval.</p>
     <a href="index.html" class="btn btn-primary">Back to Home</a>
   </div>
 
@@ -169,99 +156,65 @@
     const UPI = 'sharbhajan1322-5@okaxis';
     let selected = { plan: 'yearly', price: 499, days: 365 };
     let screenshotFile = null;
-
-    document.querySelectorAll('.plan').forEach(el => {
-      el.addEventListener('click', () => {
-        document.querySelectorAll('.plan').forEach(p => p.classList.remove('selected'));
+    function qrUrl(amount) {
+      var data = 'upi://pay?pa=' + encodeURIComponent(UPI) + '&pn=StudyAI&am=' + amount + '&cu=INR&tn=' + encodeURIComponent('StudyAI Premium');
+      return 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + encodeURIComponent(data);
+    }
+    document.querySelectorAll('.plan').forEach(function(el) {
+      el.addEventListener('click', function() {
+        document.querySelectorAll('.plan').forEach(function(p) { p.classList.remove('selected'); });
         el.classList.add('selected');
         selected = { plan: el.dataset.plan, price: +el.dataset.price, days: +el.dataset.days };
         document.getElementById('pay-amount').textContent = selected.price;
         document.getElementById('amt-note').textContent = selected.price;
-        document.getElementById('pay-link').href =
-          'upi://pay?pa=' + encodeURIComponent(UPI) + '&pn=StudyAI&am=' + selected.price + '&cu=INR&tn=' + encodeURIComponent('StudyAI Premium');
+        document.getElementById('gpay-qr').src = qrUrl(selected.price);
+        document.getElementById('pay-link').href = 'upi://pay?pa=' + encodeURIComponent(UPI) + '&pn=StudyAI&am=' + selected.price + '&cu=INR&tn=' + encodeURIComponent('StudyAI Premium');
       });
     });
-
-    document.getElementById('copy-upi').addEventListener('click', async () => {
+    document.getElementById('copy-upi').addEventListener('click', async function() {
       try { await navigator.clipboard.writeText(UPI); } catch(e) {
-        const t = document.createElement('textarea'); t.value = UPI; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove();
+        var t = document.createElement('textarea'); t.value = UPI; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove();
       }
-      const btn = document.getElementById('copy-upi');
+      var btn = document.getElementById('copy-upi');
       btn.innerHTML = '<i class="fas fa-check"></i> Copied';
-      setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i> Copy'; }, 2000);
+      setTimeout(function() { btn.innerHTML = '<i class="fas fa-copy"></i> Copy'; }, 2000);
     });
-
-    const zone = document.getElementById('upload-zone');
-    const fileInput = document.getElementById('screenshot');
-    zone.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', () => {
-      const f = fileInput.files[0];
+    var zone = document.getElementById('upload-zone');
+    var fileInput = document.getElementById('screenshot');
+    zone.addEventListener('click', function() { fileInput.click(); });
+    fileInput.addEventListener('change', function() {
+      var f = fileInput.files[0];
       if (!f) return;
       if (f.size > 5 * 1024 * 1024) { showErr('Screenshot must be less than 5MB'); return; }
       if (!f.type.startsWith('image/')) { showErr('Please upload an image file'); return; }
       screenshotFile = f;
-      const url = URL.createObjectURL(f);
-      const img = document.getElementById('preview');
-      img.src = url; img.style.display = 'block';
+      document.getElementById('preview').src = URL.createObjectURL(f);
+      document.getElementById('preview').style.display = 'block';
       zone.classList.add('has-file');
       hideErr();
     });
-
-    function showErr(m) { const e = document.getElementById('form-error'); e.textContent = m; e.style.display = 'block'; }
+    function showErr(m) { var e = document.getElementById('form-error'); e.textContent = m; e.style.display = 'block'; }
     function hideErr() { document.getElementById('form-error').style.display = 'none'; }
-
-    document.getElementById('payment-form').addEventListener('submit', async (e) => {
+    document.getElementById('payment-form').addEventListener('submit', function(e) {
       e.preventDefault();
       hideErr();
-      const txn = document.getElementById('txn-id').value.trim();
-      if (!txn) { showErr('Please enter the Transaction ID / UTR number'); return; }
-      if (!screenshotFile) { showErr('Please upload your payment screenshot'); return; }
-
-      const btn = document.getElementById('submit-btn');
+      var txn = document.getElementById('txn-id').value.trim();
+      if (!txn) { showErr('Please enter the Transaction ID'); return; }
+      if (!screenshotFile) { showErr('Please upload payment screenshot'); return; }
+      var btn = document.getElementById('submit-btn');
       btn.disabled = true; btn.innerHTML = 'Submitting...';
-
-      try {
-        const payload = {
-          id: 'pay_' + Date.now(),
-          plan: selected.plan,
-          amount: selected.price,
-          durationDays: selected.days,
-          transactionId: txn,
-          status: 'pending',
-          createdAt: new Date().toISOString(),
-          userEmail: (localStorage.getItem('studyai_user_email') || 'guest'),
-          userName: (localStorage.getItem('studyai_user_name') || 'Guest')
-        };
-        const key = 'studyai_pending_payments';
-        const list = JSON.parse(localStorage.getItem(key) || '[]');
-        list.unshift(payload);
-        localStorage.setItem(key, JSON.stringify(list.slice(0, 50)));
-
-        if (window.firebaseDB && window.FIREBASE_ENABLED) {
-          try {
-            await window.firebaseDB.collection('payments').add({
-              ...payload,
-              createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-          } catch (fe) { console.warn('Firebase save skipped', fe); }
-        }
-
-        document.getElementById('premium-app').style.display = 'none';
-        document.getElementById('success-screen').style.display = 'block';
-      } catch (err) {
-        console.error(err);
-        showErr('Failed to submit. Please try again.');
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-crown"></i> Submit for Approval';
-      }
-    });
-
-    // Fallback if gpay-qr.png missing: inject embedded QR
-    document.getElementById('gpay-qr').addEventListener('error', function() {
-      this.src = 'data:image/jpeg;base64,' + document.getElementById('qr-fallback').textContent.trim();
+      var payload = {
+        id: 'pay_' + Date.now(), plan: selected.plan, amount: selected.price,
+        durationDays: selected.days, transactionId: txn, status: 'pending',
+        createdAt: new Date().toISOString()
+      };
+      var list = JSON.parse(localStorage.getItem('studyai_pending_payments') || '[]');
+      list.unshift(payload);
+      localStorage.setItem('studyai_pending_payments', JSON.stringify(list.slice(0, 50)));
+      document.getElementById('premium-app').style.display = 'none';
+      document.getElementById('success-screen').style.display = 'block';
     });
   </script>
-  <script type="application/json" id="qr-fallback" style="display:none">PLACEHOLDER_B64</script>
   <script src="main.js" defer></script>
 </body>
 </html>
