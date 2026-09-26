@@ -3,12 +3,73 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="StudyAI - AI-powered educational platform">
   <title>StudyAI - AI-Powered Learning Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
-  <script>location.replace('premium.html');</script>
+  <link rel="stylesheet" href="live-content.css">
 </head>
 <body>
-  <p>Redirecting to <a href="premium.html">Premium</a>… Homepage restore in progress.</p>
-  <p><a href="premium.html">Go to Premium page</a> · <a href="admin.html">Admin</a></p>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        <span>Study<span class="gradient-text">AI</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link active">Home</a>
+        <a href="study-material.html" class="nav-link">Study Material</a>
+        <a href="pdf-library.html" class="nav-link">PDF Library</a>
+        <a href="quiz.html" class="nav-link">Quizzes</a>
+        <a href="ai-assistant.html" class="nav-link">AI Assistant</a>
+        <a href="videos.html" class="nav-link">Videos</a>
+        <a href="premium.html" class="nav-link" style="color:#d97706;font-weight:700"><i class="fas fa-crown"></i> Premium</a>
+        <a href="planner.html" class="nav-link">Planner</a>
+        <a href="blog.html" class="nav-link">Blog</a>
+      </div>
+      <div class="nav-actions">
+        <a href="premium.html" class="btn btn-primary btn-sm" style="background:linear-gradient(135deg,#f59e0b,#d97706);border:none"><i class="fas fa-crown"></i> Go Premium</a>
+        <button class="btn btn-primary btn-sm" id="login-btn" onclick="typeof openModal==='function'&&openModal('auth-modal')"><i class="fas fa-sign-in-alt"></i> Login</button>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-text fade-in">
+          <h1>Master Every Exam with<br><span class="gradient-text">AI-Powered Learning</span></h1>
+          <p>Complete study materials, smart quizzes, previous year papers and an AI tutor. Built for Class 6-12, SSC, Banking, UPSC and more.</p>
+          <div class="hero-cta">
+            <a href="study-material.html" class="btn btn-primary btn-lg"><i class="fas fa-rocket"></i> Start Learning Free</a>
+            <a href="premium.html" class="btn btn-secondary btn-lg" style="border-color:#f59e0b;color:#b45309"><i class="fas fa-crown"></i> Go Premium</a>
+            <a href="ai-assistant.html" class="btn btn-secondary btn-lg"><i class="fas fa-robot"></i> Try AI Assistant</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header"><h2>Explore</h2></div>
+      <div class="categories-grid">
+        <a href="study-material.html" class="category-card"><div class="category-icon"><i class="fas fa-book-open"></i></div><span class="category-name">Study Material</span></a>
+        <a href="pdf-library.html" class="category-card"><div class="category-icon"><i class="fas fa-file-pdf"></i></div><span class="category-name">PDF Library</span></a>
+        <a href="quiz.html" class="category-card"><div class="category-icon"><i class="fas fa-question-circle"></i></div><span class="category-name">Quizzes</span></a>
+        <a href="ai-assistant.html" class="category-card"><div class="category-icon"><i class="fas fa-robot"></i></div><span class="category-name">AI Assistant</span></a>
+        <a href="videos.html" class="category-card"><div class="category-icon"><i class="fas fa-play-circle"></i></div><span class="category-name">Videos</span></a>
+        <a href="premium.html" class="category-card" style="border-color:#f59e0b"><div class="category-icon" style="color:#d97706"><i class="fas fa-crown"></i></div><span class="category-name">Premium</span></a>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding:2rem;text-align:center;color:#64748b;font-size:.875rem">
+    <p>© StudyAI · <a href="premium.html">Premium</a> · <a href="admin.html">Admin</a></p>
+  </footer>
+  <script src="main.js" defer></script>
+  <script src="live-content.js" defer></script>
 </body>
 </html>
