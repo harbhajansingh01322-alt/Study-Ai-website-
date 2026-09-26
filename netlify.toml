@@ -1,10 +1,13 @@
 [build]
-  command = "npm run build"
+  # Pure static copy — no dependency install required
+  command = "node scripts/build.mjs"
   publish = "dist"
   functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "20"
+  # Skip npm ci/install so beta packages cannot break the static site deploy
+  NPM_FLAGS = "--ignore-scripts"
 
 [functions]
   node_bundler = "esbuild"
@@ -24,7 +27,6 @@
   to = "/.netlify/functions/pdf"
   status = 200
 
-# Keep legacy /pages /js /css links working
 [[redirects]]
   from = "/pages/*"
   to = "/:splat"
@@ -40,7 +42,6 @@
   to = "/:splat"
   status = 200
 
-# Explicit premium route (SPA-style safety)
 [[redirects]]
   from = "/premium"
   to = "/premium.html"
