@@ -9,7 +9,7 @@ await mkdir(output);
 
 const files = await readdir(root);
 for (const name of files) {
-  if (/^[a-z0-9-]+\.(html|css|js)$/i.test(name)) {
+  if (/^[a-z0-9-]+\.(html|css|js|png|jpg|jpeg|webp|svg|gif|ico)$/i.test(name)) {
     await copyFile(join(root, name), join(output, name));
   }
 }
