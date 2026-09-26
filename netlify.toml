@@ -3,6 +3,9 @@
   publish = "dist"
   functions = "netlify/functions"
 
+[build.environment]
+  NODE_VERSION = "20"
+
 [functions]
   node_bundler = "esbuild"
 
@@ -21,8 +24,7 @@
   to = "/.netlify/functions/pdf"
   status = 200
 
-# Existing pages were committed at the repository root while their links
-# point at /pages, /js, and /css. Keep those old links working on Netlify.
+# Keep legacy /pages /js /css links working
 [[redirects]]
   from = "/pages/*"
   to = "/:splat"
@@ -36,4 +38,10 @@
 [[redirects]]
   from = "/css/*"
   to = "/:splat"
+  status = 200
+
+# Explicit premium route (SPA-style safety)
+[[redirects]]
+  from = "/premium"
+  to = "/premium.html"
   status = 200
